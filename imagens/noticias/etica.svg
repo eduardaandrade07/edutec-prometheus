@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 132">
+<rect width="210" height="132" rx="8" fill="#191916"/>
+<circle cx="176" cy="18" r="42" fill="#8a6f42" opacity=".18"/>
+<circle cx="28" cy="120" r="58" fill="#8a6f42" opacity=".12"/>
+<g fill="none" stroke="#8a6f42" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M105 28v76M56 43h98M105 43L73 95h-34l25-52zM105 43l32 52h34l-25-52z"/></g>
+<text x="16" y="116" fill="#e9e2d5" font-family="Arial, sans-serif" font-size="10" opacity=".75">Indústria e regulação</text>
+</svg>

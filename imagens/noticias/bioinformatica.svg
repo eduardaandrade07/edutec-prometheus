@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 132">
+<rect width="210" height="132" rx="8" fill="#191916"/>
+<circle cx="176" cy="18" r="42" fill="#8f7238" opacity=".18"/>
+<circle cx="28" cy="120" r="58" fill="#8f7238" opacity=".12"/>
+<g fill="none" stroke="#8f7238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M92 28c-28 10-28 50 0 60M128 28c28 10 28 50 0 60M96 36h28M90 50h40M90 66h40M96 80h28"/></g>
+<text x="16" y="116" fill="#e9e2d5" font-family="Arial, sans-serif" font-size="10" opacity=".75">Nanopartículas e DNA</text>
+</svg>

@@ -1,0 +1,37 @@
+
+html[data-theme="claro"] {
+  --bg:#f6f2e9;
+  --bg-2:#efe9dc;
+  --bg-3:#e5ddcb;
+  --panel:#fdfbf6;
+  --text:#191712;
+  --text-dim:#5a544a;
+  --text-faint:#8b8478;
+  --line:#ddd4c1;
+  --line-soft:#e8e0d0;
+  --beige:#8c6d3f;
+  --beige-2:#6f5730;
+  --beige-deep:#b09468;
+  --on-beige:#fdfbf6;
+  --shadow:0 24px 60px rgba(70,58,34,.16);
+  --shadow-sm:0 10px 26px rgba(70,58,34,.1);
+  --area:#8c6d3f;
+}
+
+html[data-theme="light"][data-area="saude"]{ --area:#a8432a; }
+html[data-theme="light"][data-area="industrial"]{ --area:#6e685c; }
+html[data-theme="light"][data-area="agricola"]{ --area:#5f6b37; }
+html[data-theme="light"][data-area="marinha"]{ --area:#2e5b78; }
+html[data-theme="light"][data-area="alimentar"]{ --area:#a97c22; }
+html[data-theme="light"][data-area="ambiental"]{ --area:#625d54; }
+html[data-theme="light"][data-area="bioinformatica"]{ --area:#8f7238; }
+html[data-theme="light"][data-area="etica"]{ --area:#6b5470; }
+html[data-theme="light"][data-area="florestal"]{ --area:#6b4c32; }
+html[data-theme="light"][data-area="forense"]{ --area:#48453f; }
+
+html[data-theme="light"] .navegacao.fixo{background:rgba(246,242,233,.84)}
+html[data-theme="light"] .alternador{background:linear-gradient(160deg,#9ec6e8,#cfe3f3);border-color:#b4cfe4}
+html[data-theme="light"] .alternador__estrelas{opacity:0}
+html[data-theme="light"] .alternador__botao{left:3px;background:radial-gradient(circle at 34% 30%,#fff6d8,#f5cf5e 55%,#e0a92c);box-shadow:0 2px 10px rgba(224,169,44,.5)}
+html[data-theme="light"] .alternador__botao::after{opacity:0}
+html[data-theme="light"] .janela-dna__fundo{background:rgba(60,52,36,.4)}

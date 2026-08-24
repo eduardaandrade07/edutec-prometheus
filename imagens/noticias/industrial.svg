@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 132">
+<rect width="210" height="132" rx="8" fill="#191916"/>
+<circle cx="176" cy="18" r="42" fill="#6e685c" opacity=".18"/>
+<circle cx="28" cy="120" r="58" fill="#6e685c" opacity=".12"/>
+<g fill="none" stroke="#6e685c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M55 100V55l28 18V55l28 18V34h18v66z"/><path d="M75 86h12M101 86h12"/></g>
+<text x="16" y="116" fill="#e9e2d5" font-family="Arial, sans-serif" font-size="10" opacity=".75">Biomateriais</text>
+</svg>
