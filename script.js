@@ -684,6 +684,954 @@ window.PROMETHEUS_THUMBS = {
         };
 
         return m;
+      },
+
+
+      /* Modelo da área agrícola */
+
+      agricola: function () {
+
+        var m = nb();
+
+
+        /* Semente e um punhado de terra */
+
+        ball(
+          m,
+          0,
+          -1.55,
+          0,
+          0.42,
+          'b'
+        );
+
+        ringRods(
+          m,
+          ringPts(0, -1.62, 0, 0.62, 'xz', 22),
+          1.2,
+          'b'
+        );
+
+        [
+          [0.3, -1.85, 0.1],
+          [-0.32, -1.82, -0.12],
+          [0.05, -1.9, -0.28]
+        ].forEach(function (raiz) {
+          rod(m, [0, -1.6, 0], raiz, 1.0, 'b');
+        });
+
+
+        /* Caule com uma leve curva */
+
+        var caule = [
+          [0, -1.55, 0],
+          [0.04, -1.0, 0.04],
+          [0.05, -0.4, 0.03],
+          [-0.04, 0.3, -0.04],
+          [0, 1.15, 0]
+        ];
+
+        for (var i = 0; i < caule.length - 1; i++) {
+
+          rod(
+            m,
+            caule[i],
+            caule[i + 1],
+            2.5,
+            'a'
+          );
+        }
+
+        ball(
+          m,
+          0,
+          1.15,
+          0,
+          0.09,
+          'a'
+        );
+
+
+        /* Folha com seis pontos, nervura central e duas nervuras laterais */
+
+        function folha(cy, ang, tam, espelhar) {
+
+          var d = espelhar ? -1 : 1;
+          var L = 1.05 * tam;
+          var W = 0.42 * tam;
+
+          var local = [
+            [0, 0],
+            [0.22, 0.62],
+            [0.58, 0.95],
+            [1.0, 0],
+            [0.58, -0.95],
+            [0.22, -0.62]
+          ];
+
+          var pts = local.map(function (p) {
+
+            return [
+              d * p[0] * L * Math.cos(ang),
+              cy + p[1] * W,
+              p[0] * L * Math.sin(ang)
+            ];
+          });
+
+          face(m, pts, 'a', 0.88);
+
+          var ponta = [
+            d * L * Math.cos(ang),
+            cy,
+            L * Math.sin(ang)
+          ];
+
+          rod(m, [0, cy, 0], ponta, 1.0, 'a', 'b');
+          rod(m, [0, cy, 0], pts[1], 0.6, 'a');
+          rod(m, [0, cy, 0], pts[4], 0.6, 'a');
+        }
+
+        folha(0.05, 0.55, 1.0, false);
+        folha(0.45, 0.35, 0.82, true);
+        folha(0.78, 0.18, 0.5, false);
+
+        m.opts = {
+          unit: 0.32,
+          roll: 0,
+          tilt: 0.32,
+          cam: 10.5,
+          focus: 0,
+          range: 4.2,
+          spin: 0.0016
+        };
+
+        return m;
+      },
+
+
+      /* Modelo da área de alimentos */
+
+      alimentar: function () {
+
+        var m = nb();
+        var segs = 24;
+
+
+        /* Perfil do frasco: altura e raio de cada anel */
+
+        var niveis = [
+          [1.15, 0.16],
+          [0.58, 0.16],
+          [0.42, 0.24],
+          [0.05, 0.55],
+          [-0.35, 0.72],
+          [-0.75, 0.88],
+          [-1.05, 0.55],
+          [-1.22, 0.18]
+        ];
+
+        var aneis = niveis.map(function (nv) {
+          return ringPts(0, nv[0], 0, nv[1], 'xz', segs);
+        });
+
+        aneis.forEach(function (anel) {
+          ringRods(m, anel, 1.4, 'b');
+        });
+
+        for (var i = 0; i < aneis.length - 1; i++) {
+
+          for (var j = 0; j < segs; j += 2) {
+            rod(m, aneis[i][j], aneis[i + 1][j], 1.0, 'b');
+          }
+        }
+
+
+        /* Superfície do líquido, com brilho de verdade (anel com muitos pontos) */
+
+        face(m, aneis[4], 'a', 0.5);
+
+
+        /* Rolha e um pequeno brilho de vidro */
+
+        ball(
+          m,
+          0,
+          1.32,
+          0,
+          0.15,
+          'rod'
+        );
+
+        ball(
+          m,
+          0.05,
+          1.37,
+          -0.05,
+          0.05,
+          'b'
+        );
+
+
+        /* Bolhas de fermentação dentro do frasco */
+
+        var bolhas = [
+          [0.15, -0.9, 0.1, 0.06],
+          [-0.25, -0.6, -0.15, 0.05],
+          [0.3, -0.4, 0.2, 0.045],
+          [-0.1, -1.05, -0.3, 0.05],
+          [0.05, -0.7, 0.35, 0.04],
+          [-0.35, -0.85, 0.05, 0.055]
+        ];
+
+        bolhas.forEach(function (b) {
+          ball(m, b[0], b[1], b[2], b[3], 'a');
+        });
+
+        m.opts = {
+          unit: 0.30,
+          roll: 0,
+          tilt: 0.32,
+          cam: 11,
+          focus: 0,
+          range: 4.4,
+          spin: 0.0016
+        };
+
+        return m;
+      },
+
+
+      /* Modelo da área ambiental */
+
+      ambiental: function () {
+
+        var m = nb();
+        var R = 1.55;
+        var eixo = 0.41;
+        var ceixo = Math.cos(eixo);
+        var seixo = Math.sin(eixo);
+
+
+        /* Inclina um conjunto de pontos como o eixo real da Terra */
+
+        function inclinar(pts) {
+
+          return pts.map(function (p) {
+
+            return [
+              p[0],
+              p[1] * ceixo - p[2] * seixo + 0.15,
+              p[1] * seixo + p[2] * ceixo
+            ];
+          });
+        }
+
+        function esfera(lat, lon, raio) {
+
+          return [
+            raio * Math.cos(lat) * Math.sin(lon),
+            raio * Math.sin(lat),
+            raio * Math.cos(lat) * Math.cos(lon)
+          ];
+        }
+
+        ball(
+          m,
+          0,
+          0.15,
+          0,
+          R,
+          'a'
+        );
+
+
+        /* Equador, dois meridianos e dois trópicos, todos inclinados juntos */
+
+        ringRods(m, inclinar(ringPts(0, 0, 0, R * 1.03, 'xz', 48)), 1.1, 'b');
+        ringRods(m, inclinar(ringPts(0, 0, 0, R * 1.03, 'xy', 48)), 1.0, 'b');
+        ringRods(m, inclinar(ringPts(0, 0, 0, R * 1.03, 'yz', 48)), 1.0, 'b');
+
+        [0.45, -0.45].forEach(function (lat) {
+
+          var raioLat = R * 1.03 * Math.cos(lat);
+          var yLat = R * Math.sin(lat);
+
+          ringRods(
+            m,
+            inclinar(ringPts(0, yLat, 0, raioLat, 'xz', 36)),
+            0.8,
+            'b'
+          );
+        });
+
+
+        /* Continentes: manchas presas à superfície da esfera */
+
+        [
+          { lat: 0.35, lon: -0.5, d: 0.32 },
+          { lat: -0.2, lon: 0.9, d: 0.26 },
+          { lat: 0.55, lon: 1.7, d: 0.22 },
+          { lat: -0.5, lon: -1.9, d: 0.28 },
+          { lat: 0.05, lon: 2.7, d: 0.24 }
+        ].forEach(function (c) {
+
+          var pts = inclinar([
+            esfera(c.lat - c.d, c.lon - c.d, R * 1.015),
+            esfera(c.lat - c.d, c.lon + c.d, R * 1.015),
+            esfera(c.lat + c.d, c.lon + c.d, R * 1.015),
+            esfera(c.lat + c.d, c.lon - c.d, R * 1.015)
+          ]);
+
+          face(m, pts, 'b', 0.9);
+        });
+
+
+        /* Base de apoio do globo */
+
+        rod(
+          m,
+          [0, 0.15 - R, 0],
+          [0, -1.55, 0],
+          2.4,
+          'rod'
+        );
+
+        ringRods(
+          m,
+          ringPts(0, -1.55, 0, 0.55, 'xz', 24),
+          2.2,
+          'rod'
+        );
+
+        m.opts = {
+          unit: 0.27,
+          roll: 0,
+          tilt: 0.32,
+          cam: 11,
+          focus: 0,
+          range: 4.6,
+          spin: 0.0022
+        };
+
+        return m;
+      },
+
+
+      /* Modelo da área de bioinformática */
+
+      bioinformatica: function () {
+
+        var m = nb();
+        var s = 1.0;
+        var c = 0.25;
+        var h = 0.16;
+
+
+        /* Encapsulamento em oitavo, com os quatro cantos chanfrados */
+
+        var oitavo = [
+          [-s + c, -s], [s - c, -s],
+          [s, -s + c], [s, s - c],
+          [s - c, s], [-s + c, s],
+          [-s, s - c], [-s, -s + c]
+        ];
+
+        var topo = oitavo.map(function (p) { return [p[0], h, p[1]]; });
+        var base = oitavo.map(function (p) { return [p[0], -h, p[1]]; });
+
+        for (var i = 0; i < topo.length; i++) {
+
+          rod(m, topo[i], topo[(i + 1) % topo.length], 2.0, 'b');
+          rod(m, base[i], base[(i + 1) % base.length], 2.0, 'b');
+          rod(m, topo[i], base[i], 2.0, 'b');
+
+          ball(m, topo[i][0], topo[i][1], topo[i][2], 0.05, 'b');
+        }
+
+        face(m, topo, 'b', 0.55);
+
+
+        /* Núcleo do chip, com um segundo núcleo elevado por dentro */
+
+        var d = 0.56;
+        var d2 = 0.3;
+
+        var nucleo = [
+          [-d, h + 0.02, -d],
+          [d, h + 0.02, -d],
+          [d, h + 0.02, d],
+          [-d, h + 0.02, d]
+        ];
+
+        var nucleo2 = [
+          [-d2, h + 0.05, -d2],
+          [d2, h + 0.05, -d2],
+          [d2, h + 0.05, d2],
+          [-d2, h + 0.05, d2]
+        ];
+
+        face(m, nucleo, 'a', 0.9);
+        face(m, nucleo2, 'rod', 0.9);
+
+        for (i = -1; i <= 1; i++) {
+
+          rod(m, [-d2, h + 0.06, d2 * i * 0.6], [d2, h + 0.06, d2 * i * 0.6], 0.6, 'b');
+          rod(m, [d2 * i * 0.6, h + 0.06, -d2], [d2 * i * 0.6, h + 0.06, d2], 0.6, 'b');
+        }
+
+
+        /* Fios de ligação entre o núcleo e os cantos chanfrados */
+
+        [
+          [d, d], [-d, d], [-d, -d], [d, -d]
+        ].forEach(function (p) {
+
+          var canto = [p[0] * 1.42, h, p[1] * 1.42];
+
+          rod(m, [p[0], h + 0.02, p[1]], canto, 0.5, 'b');
+        });
+
+
+        /* Led de status em um dos cantos */
+
+        ball(m, 0.65, h + 0.06, -0.65, 0.045, 'a');
+
+
+        /* Pinos ao redor da placa, três por lado */
+
+        var pinos = [];
+
+        [-0.5, 0, 0.5].forEach(function (x) {
+          pinos.push([[x, 0, -s], [x, 0, -s - 0.3]]);
+          pinos.push([[x, 0, s], [x, 0, s + 0.3]]);
+          pinos.push([[-s, 0, x], [-s - 0.3, 0, x]]);
+          pinos.push([[s, 0, x], [s + 0.3, 0, x]]);
+        });
+
+        pinos.forEach(function (p) {
+          rod(m, p[0], p[1], 1.5, 'b');
+          ball(m, p[1][0], p[1][1], p[1][2], 0.05, 'b');
+        });
+
+        m.opts = {
+          unit: 0.32,
+          roll: 0,
+          tilt: 0.42,
+          cam: 10.5,
+          focus: 0,
+          range: 4.0,
+          spin: 0.0018
+        };
+
+        return m;
+      },
+
+
+      /* Modelo da área de ética */
+
+      etica: function () {
+
+        var m = nb();
+
+        rod(
+          m,
+          [0, -1.1, 0],
+          [0, 1.0, 0],
+          2.6,
+          'rod'
+        );
+
+        rod(
+          m,
+          [-0.9, 1.0, 0],
+          [0.9, 1.0, 0],
+          2.6,
+          'rod'
+        );
+
+        ball(
+          m,
+          0,
+          1.08,
+          0,
+          0.15,
+          'a'
+        );
+
+
+        /* Colar decorativo onde a viga encontra o mastro */
+
+        ringRods(m, ringPts(0, 0.92, 0, 0.16, 'xz', 16), 1.2, 'a');
+
+
+        /* Pedestal em dois níveis */
+
+        var peBase = ringPts(0, -1.15, 0, 0.55, 'xz', 24);
+        var peTopo = ringPts(0, -0.95, 0, 0.32, 'xz', 24);
+
+        ringRods(m, peBase, 1.6, 'rod');
+        ringRods(m, peTopo, 1.4, 'rod');
+
+        for (var pi = 0; pi < peBase.length; pi += 6) {
+          rod(m, peBase[pi], peTopo[pi], 1.0, 'rod');
+        }
+
+        ball(m, 0, -1.1, 0, 0.12, 'rod');
+
+
+        /* Dois pratos suspensos por fios, com aro duplo e fundo */
+
+        [-0.9, 0.9].forEach(function (x) {
+
+          rod(
+            m,
+            [x, 1.0, 0],
+            [x, 0.32, 0],
+            1.2,
+            'b'
+          );
+
+          var prato = ringPts(x, 0.3, 0, 0.4, 'xz', 20);
+          var pratoInterno = ringPts(x, 0.3, 0, 0.32, 'xz', 20);
+          var fundo = ringPts(x, 0.2, 0, 0.28, 'xz', 20);
+
+          ringRods(m, prato, 1.6, 'a');
+          ringRods(m, pratoInterno, 0.8, 'a');
+          ringRods(m, fundo, 1.2, 'b');
+
+          face(m, prato, 'a', 0.35);
+
+          for (var k = 0; k < prato.length; k += 5) {
+
+            rod(
+              m,
+              [x, 0.34, 0],
+              prato[k],
+              0.7,
+              'b'
+            );
+
+            rod(m, fundo[k], prato[k], 0.6, 'b');
+          }
+        });
+
+        m.opts = {
+          unit: 0.30,
+          roll: 0,
+          tilt: 0.3,
+          cam: 11,
+          focus: 0,
+          range: 4.4,
+          spin: 0.0018
+        };
+
+        return m;
+      },
+
+
+      /* Modelo da área florestal */
+
+      florestal: function () {
+
+        var m = nb();
+
+        rod(
+          m,
+          [0, -1.2, 0],
+          [0, -0.5, 0],
+          3.0,
+          'rod'
+        );
+
+
+        /* Raízes na base do tronco */
+
+        [
+          [0.32, -1.3, 0.14],
+          [-0.3, -1.28, -0.18],
+          [0.08, -1.32, -0.32],
+          [-0.16, -1.3, 0.3]
+        ].forEach(function (p) {
+          rod(m, [0, -1.2, 0], p, 1.6, 'rod');
+        });
+
+
+        /* Cria uma camada de copa em formato de cone, com pinhas espalhadas */
+
+        function copa(topoY, baseY, raio, segs) {
+
+          var apice = [0, topoY, 0];
+          var anel = ringPts(0, baseY, 0, raio, 'xz', segs);
+
+          ringRods(m, anel, 1.4, 'a');
+
+          anel.forEach(function (p, i) {
+
+            rod(
+              m,
+              p,
+              apice,
+              1.1,
+              'a',
+              'b'
+            );
+
+            if (i % 2 === 0) {
+
+              face(
+                m,
+                [apice, p, anel[(i + 1) % anel.length]],
+                'a',
+                0.5
+              );
+            }
+
+            if (i % 4 === 0) {
+              ball(m, p[0] * 0.94, p[1] - 0.06, p[2] * 0.94, 0.045, 'b');
+            }
+          });
+
+          ball(
+            m,
+            apice[0],
+            apice[1],
+            apice[2],
+            0.07,
+            'b'
+          );
+        }
+
+        copa(0.35, -0.55, 0.85, 16);
+        copa(0.85, 0.05, 0.62, 13);
+        copa(1.32, 0.55, 0.4, 10);
+
+        m.opts = {
+          unit: 0.30,
+          roll: 0,
+          tilt: 0.32,
+          cam: 11,
+          focus: 0,
+          range: 4.4,
+          spin: 0.0018
+        };
+
+        return m;
+      },
+
+
+      /* Modelo da área forense */
+
+      forense: function () {
+
+        var m = nb();
+
+        var cx = -0.3;
+        var cy = 0.35;
+        var r = 0.78;
+
+
+        /* Aro externo e o vidro, levemente encaixado */
+
+        var aro = ringPts(cx, cy, 0, r, 'xy', 32);
+        var vidro = ringPts(cx, cy, 0, r * 0.86, 'xy', 32);
+
+        ringRods(m, aro, 2.0, 'rod');
+        ringRods(m, vidro, 1.0, 'rod');
+
+        face(m, vidro, 'b', 0.22);
+
+
+        /* Cabo preso na borda inferior direita da lente */
+
+        var presa = [
+          cx + r * Math.cos(-Math.PI / 4),
+          cy + r * Math.sin(-Math.PI / 4),
+          0
+        ];
+
+        var ponta = [1.0, -1.2, 0];
+
+        rod(
+          m,
+          presa,
+          ponta,
+          2.8,
+          'rod'
+        );
+
+        ball(
+          m,
+          ponta[0],
+          ponta[1],
+          ponta[2],
+          0.16,
+          'rod'
+        );
+
+
+        /* Anéis de acabamento ao redor do cabo, como uma pega enrolada */
+
+        var dx = ponta[0] - presa[0];
+        var dy = ponta[1] - presa[1];
+        var comp = Math.hypot(dx, dy);
+        var ux = -dy / comp;
+        var uy = dx / comp;
+
+        [0.3, 0.5, 0.7].forEach(function (t) {
+
+          var cxp = presa[0] + dx * t;
+          var cyp = presa[1] + dy * t;
+          var anel = [];
+
+          for (var a = 0; a < 10; a++) {
+
+            var ang = a / 10 * TAU;
+            var co = Math.cos(ang);
+            var si = Math.sin(ang);
+
+            anel.push([
+              cxp + ux * co * 0.13,
+              cyp + uy * co * 0.13,
+              si * 0.13
+            ]);
+          }
+
+          ringRods(m, anel, 1.4, 'rod');
+        });
+
+
+        /* Dois brilhos no vidro */
+
+        ball(
+          m,
+          cx - r * 0.4,
+          cy + r * 0.4,
+          0.05,
+          0.09,
+          'b'
+        );
+
+        ball(
+          m,
+          cx - r * 0.15,
+          cy + r * 0.58,
+          0.06,
+          0.045,
+          'b'
+        );
+
+        m.opts = {
+          unit: 0.30,
+          roll: 0,
+          tilt: 0.3,
+          cam: 11,
+          focus: 0,
+          range: 4.4,
+          spin: 0.0018
+        };
+
+        return m;
+      },
+
+
+      /* Modelo da área industrial */
+
+      industrial: function () {
+
+        var m = nb();
+
+        var segs = 24;
+        var R = 0.82;
+        var R2 = 1.05;
+        var espessura = 0.13;
+
+
+        /* Constrói uma face completa da engrenagem em uma altura y */
+
+        function camada(y) {
+
+          var anel = ringPts(0, y, 0, R, 'xz', segs);
+          var cubo = ringPts(0, y, 0, 0.3, 'xz', segs);
+
+          ringRods(m, anel, 2.0, 'b');
+          ringRods(m, cubo, 1.8, 'b');
+
+          for (var i = 0; i < segs; i += 2) {
+
+            var t = i / segs * TAU;
+            var t2 = (i + 1) / segs * TAU;
+
+            var p1 = anel[i];
+            var p2 = anel[i + 1];
+
+            var p1o = [Math.cos(t) * R2, y, Math.sin(t) * R2];
+            var p2o = [Math.cos(t2) * R2, y, Math.sin(t2) * R2];
+
+            rod(m, p1, p1o, 1.6, 'a');
+            rod(m, p2, p2o, 1.6, 'a');
+            rod(m, p1o, p2o, 1.6, 'a');
+
+            face(m, [p1, p1o, p2o, p2], 'a', 0.85);
+          }
+
+          for (i = 0; i < segs; i += 4) {
+            rod(m, cubo[i], anel[i], 1.2, 'b');
+          }
+
+          return { anel: anel, cubo: cubo };
+        }
+
+        var frente = camada(espessura);
+        var tras = camada(-espessura);
+
+
+        /* Liga as duas faces, dando espessura real à peça */
+
+        for (var i = 0; i < segs; i += 2) {
+          rod(m, frente.anel[i], tras.anel[i], 1.4, 'b');
+        }
+
+        for (i = 0; i < segs; i += 4) {
+          rod(m, frente.cubo[i], tras.cubo[i], 1.2, 'b');
+        }
+
+
+        /* Furos de fixação ao redor do cubo, dos dois lados */
+
+        for (i = 0; i < 5; i++) {
+
+          var ang = i / 5 * TAU;
+          var px = Math.cos(ang) * 0.52;
+          var pz = Math.sin(ang) * 0.52;
+
+          ball(m, px, espessura, pz, 0.055, 'rod');
+          ball(m, px, -espessura, pz, 0.055, 'rod');
+          rod(m, [px, espessura, pz], [px, -espessura, pz], 0.9, 'rod');
+        }
+
+
+        /* Eixo central */
+
+        ball(m, 0, espessura, 0, 0.14, 'rod');
+        ball(m, 0, -espessura, 0, 0.14, 'rod');
+        rod(m, [0, espessura, 0], [0, -espessura, 0], 1.6, 'rod');
+
+        m.opts = {
+          unit: 0.34,
+          roll: 0,
+          tilt: 0.5,
+          cam: 10.5,
+          focus: 0,
+          range: 4.0,
+          spin: 0.0018
+        };
+
+        return m;
+      },
+
+
+      /* Modelo da área marinha */
+
+      marinha: function () {
+
+        var m = nb();
+
+        var segs = 110;
+        var voltas = 2.6;
+        var r0 = 0.09;
+        var k = 0.82;
+
+        var cores = ['a', 'b', 'rod'];
+
+        var pts = [];
+        var raios = [];
+
+
+        /* Espiral logarítmica, como a concha de um náutilo */
+
+        for (var i = 0; i <= segs; i++) {
+
+          var t = i / segs;
+          var theta = t * voltas * TAU;
+          var raio = r0 * Math.exp(k * theta / TAU);
+
+          pts.push([
+            Math.cos(theta) * raio,
+            (t - 0.5) * 0.55,
+            Math.sin(theta) * raio
+          ]);
+
+          raios.push(raio);
+        }
+
+        for (i = 0; i < pts.length; i++) {
+
+          var tubo = Math.min(0.42, raios[i] * 0.34 + 0.05);
+          var faixa = cores[Math.floor(i / 6) % cores.length];
+
+          ball(
+            m,
+            pts[i][0],
+            pts[i][1],
+            pts[i][2],
+            tubo,
+            faixa
+          );
+
+          if (i > 0) {
+
+            rod(
+              m,
+              pts[i - 1],
+              pts[i],
+              tubo * 9,
+              faixa,
+              faixa
+            );
+          }
+
+
+          /* Pequenas costelas de crescimento na casca */
+
+          if (i % 5 === 0 && raios[i] > 0.001) {
+
+            var nx = pts[i][0] / raios[i];
+            var nz = pts[i][2] / raios[i];
+
+            ball(
+              m,
+              pts[i][0] + nx * tubo * 0.9,
+              pts[i][1],
+              pts[i][2] + nz * tubo * 0.9,
+              tubo * 0.35,
+              'rod'
+            );
+          }
+        }
+
+
+        /* Ponta arredondada no centro da espiral */
+
+        ball(
+          m,
+          pts[0][0],
+          pts[0][1],
+          pts[0][2],
+          Math.max(0.09, raios[0] * 0.34 + 0.05) * 1.3,
+          'rod'
+        );
+
+        m.opts = {
+          unit: 0.34,
+          roll: 0.15,
+          tilt: 0.55,
+          cam: 10.5,
+          focus: 0,
+          range: 4.0,
+          spin: 0.0018
+        };
+
+        return m;
       }
     };
 

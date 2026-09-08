@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR" data-theme="dark" data-area="agricola">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#080808">
+
+    <title>Agrícola — Prometheus Biotecnologia</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;1,400;1,500&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="../../style.css">
+
+</head>
+
+<body>
+
+    <div class="carregador" id="carregador">
+
+        <div class="carregador__interno">
+
+            <div class="carregador__numero" id="numeroCarregamento">000</div>
+
+            <div class="carregador__barra">
+
+                <i id="barraCarregamento"></i>
+
+            </div>
+
+            <div class="carregador__texto">
+
+                Prometheus Biotecnologia
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="progresso" id="progresso"></div>
+
+    <svg class="granulado" xmlns="http://www.w3.org/2000/svg">
+
+        <filter id="grainF">
+
+            <feturbulence
+                basefrequency="0.85"
+                numoctaves="4"
+                type="fractalNoise"
+            ></feturbulence>
+
+        </filter>
+
+        <rect
+            filter="url(#grainF)"
+            height="100%"
+            width="100%"
+        ></rect>
+
+    </svg>
+
+    <nav aria-label="Menu" class="menu-movel" id="menu-movel">
+
+        <button class="menu-movel__fechar" id="fecharMenu">
+
+            Fechar ✕
+
+        </button>
+
+        <a
+            data-alvo-secao="inicio"
+            data-pagina="home"
+            href="../../index.html#inicio"
+        >
+
+            Início
+
+        </a>
+
+        <a
+            data-alvo-secao="areas"
+            data-pagina="home"
+            href="../../index.html#areas"
+        >
+
+            Áreas
+
+        </a>
+
+        <a
+            data-alvo-secao="aplicacoes"
+            data-pagina="home"
+            href="../../index.html#aplicacoes"
+        >
+
+            Aplicações
+
+        </a>
+
+        <a
+            data-alvo-secao="noticias"
+            data-pagina="home"
+            href="../../index.html#noticias"
+        >
+
+            Notícias
+
+        </a>
+
+        <a
+            data-alvo-secao="sobre"
+            data-pagina="home"
+            href="../../index.html#sobre"
+        >
+
+            Sobre
+
+        </a>
+
+        <a
+            data-alvo-secao="contato"
+            data-pagina="home"
+            href="../../index.html#contato"
+        >
+
+            Contato
+
+        </a>
+
+    </nav>
+
+    <div class="moldura">
+
+        <header class="navegacao" id="navegacao">
+
+            <a
+                class="marca"
+                data-pagina="home"
+                href="../../index.html#inicio"
+            >
+
+                <span class="marca__simbolo">
+
+                    <svg
+                        aria-hidden="true"
+                        fill="none"
+                        viewbox="0 0 24 24"
+                    >
+
+                        <g
+                            stroke="var(--beige)"
+                            stroke-linecap="round"
+                            stroke-width="1.5"
+                        >
+
+                            <path d="M7 3c0 5 10 5 10 9s-10 4-10 9"></path>
+
+                            <path d="M17 3c0 5-10 5-10 9s10 4 10 9"></path>
+
+                        </g>
+
+                        <g
+                            opacity=".9"
+                            stroke="var(--area)"
+                            stroke-linecap="round"
+                            stroke-width="1.2"
+                        >
+
+                            <path d="M8.6 6.4h6.8M7.4 9.4h9.2M8.6 15h6.8M7.4 18h9.2"></path>
+
+                        </g>
+
+                    </svg>
+
+                </span>
+
+                <span class="marca__texto">
+
+                    <span class="marca__nome">Prometheus</span>
+
+                    <span class="marca__subtitulo">
+
+                        Biotecnologia para um futuro melhor
+
+                    </span>
+
+                </span>
+
+            </a>
+
+            <nav
+                aria-label="Navegação principal"
+                class="navegacao__links"
+                id="linksNavegacao"
+            >
+
+                <a
+                    data-alvo-secao="areas"
+                    data-pagina="home"
+                    href="../../index.html#areas"
+                >
+
+                    ÁREAS
+
+                </a>
+
+                <a
+                    data-alvo-secao="aplicacoes"
+                    data-pagina="home"
+                    href="../../index.html#aplicacoes"
+                >
+
+                    APLICAÇÕES
+
+                </a>
+
+                <a
+                    data-alvo-secao="noticias"
+                    data-pagina="home"
+                    href="../../index.html#noticias"
+                >
+
+                    NOTÍCIAS
+
+                </a>
+
+                <a
+                    data-alvo-secao="sobre"
+                    data-pagina="home"
+                    href="../../index.html#sobre"
+                >
+
+                    SOBRE
+
+                </a>
+
+                <a
+                    data-alvo-secao="contato"
+                    data-pagina="home"
+                    href="../../index.html#contato"
+                >
+
+                    CONTATO
+
+                </a>
+
+            </nav>
+
+            <div class="navegacao__direita">
+
+                <button
+                    aria-label="Alternar modo claro e escuro"
+                    aria-pressed="false"
+                    class="alternador"
+                    id="botaoTema"
+                >
+
+                    <span class="alternador__estrelas">
+
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                        <i></i>
+
+                    </span>
+
+                    <span class="alternador__botao"></span>
+
+                </button>
+
+                <button
+                    aria-label="Abrir menu"
+                    class="botao-menu"
+                    id="botao-menu"
+                >
+
+                    <b></b>
+
+                </button>
+
+            </div>
+
+        </header>
+
+        <main>
+
+            <div class="pagina ativa" id="view-agricola">
+
+                <section
+                    class="inicio-area faixa"
+                    data-padrao="agricola"
+                    data-secao="inicio"
+                >
+
+                    <div class="inicio-area__trilho">
+
+                        <b>03</b>
+
+                        <i></i>
+
+                        <span>Biotecnologia Verde</span>
+
+                        <i></i>
+
+                        <b style="color:var(--text-faint);font-size:12px">
+
+                            10
+
+                        </b>
+
+                    </div>
+
+                    <div class="inicio-area__grade">
+
+                        <div class="inicio-area__conteudo">
+
+                            <span class="migalhas">
+
+                                <a
+                                    data-pagina="home"
+                                    href="../../index.html#inicio"
+                                >
+
+                                    Início
+
+                                </a>
+
+                                ·
+
+                                <a
+                                    data-alvo-secao="areas"
+                                    data-pagina="home"
+                                    href="../../index.html#areas"
+                                >
+
+                                    Áreas
+
+                                </a>
+
+                                · Verde
+
+                            </span>
+
+                            <span class="eyebrow">
+
+                                Agricultura
+
+                            </span>
+
+                            <h1>
+
+                                <span class="linha">
+
+                                    <span>CULTIVO</span>
+
+                                </span>
+
+                                <span class="linha">
+
+                                    <span class="italico">
+
+                                        com ciência
+
+                                    </span>
+
+                                </span>
+
+                            </h1>
+
+                            <p class="inicio__descricao">
+
+                                Melhoramento de plantas, culturas geneticamente aprimoradas,
+                                biofertilizantes e biopesticidas para uma agricultura mais produtiva.
+
+                            </p>
+
+                            <button
+                                class="botao"
+                                data-rolagem="aplicacoes"
+                            >
+
+                                Ver aplicações
+
+                                <svg viewbox="0 0 16 12">
+
+                                    <path d="M0 6h13M9.5 1.5 14 6l-4.5 4.5"></path>
+
+                                </svg>
+
+                            </button>
+
+                            <dl class="ficha">
+
+                                <div>
+
+                                    <dt>Espectro</dt>
+
+                                    <dd>
+
+                                        <em>Verde</em>
+
+                                    </dd>
+
+                                </div>
+
+                                <div>
+
+                                    <dt>Campo</dt>
+
+                                    <dd>Agricultura</dd>
+
+                                </div>
+
+                                <div>
+
+                                    <dt>Objeto-símbolo</dt>
+
+                                    <dd>Broto</dd>
+
+                                </div>
+
+                            </dl>
+
+                        </div>
+
+                        <div class="inicio-area__palco">
+
+                            <div
+                                class="inicio__palco"
+                                data-object="Broto"
+                            ></div>
+
+                            <span class="inicio-area__rotulo">
+
+                                <i></i>
+
+                                <b>Broto</b>
+
+                                · Ciclo de cultivo · arraste para girar
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="inicio-area__faixa"></div>
+
+                </section>
+
+                <section
+                    class="fundo faixa"
+                    data-secao="sobre"
+                >
+
+                    <div class="cena revelar">
+
+                        <div class="cena__visual">
+
+                            <svg
+                                aria-label="Ilustração da biotecnologia verde"
+                                class="cena__arte"
+                                fill="none"
+                                role="img"
+                                viewbox="0 0 400 300"
+                            >
+
+                                <defs>
+
+                                    <lineargradient
+                                        id="gagricola-a"
+                                        x1="0"
+                                        x2="1"
+                                        y1="0"
+                                        y2="1"
+                                    >
+
+                                        <stop
+                                            offset="0"
+                                            stop-color="var(--area)"
+                                            stop-opacity=".28"
+                                        ></stop>
+
+                                        <stop
+                                            offset="1"
+                                            stop-color="var(--area)"
+                                            stop-opacity="0"
+                                        ></stop>
+
+                                    </lineargradient>
+
+                                    <radialgradient
+                                        cx="50%"
+                                        cy="45%"
+                                        id="ragricola-a"
+                                        r="55%"
+                                    >
+
+                                        <stop
+                                            offset="0"
+                                            stop-color="var(--area)"
+                                            stop-opacity=".38"
+                                        ></stop>
+
+                                        <stop
+                                            offset="1"
+                                            stop-color="var(--area)"
+                                            stop-opacity="0"
+                                        ></stop>
+
+                                    </radialgradient>
+
+                                </defs>
+
+                                <rect
+                                    fill="url(#ragricola-a)"
+                                    height="300"
+                                    width="400"
+                                ></rect>
+
+                                <g
+                                    stroke="var(--area)"
+                                    stroke-width="1.5"
+                                >
+
+                                    <path d="M200 244V116"></path>
+
+                                    <path d="M200 168c-34 0-52-20-52-52 34 0 52 18 52 52z"></path>
+
+                                    <path d="M200 146c34 0 52-20 52-52-34 0-52 18-52 52z"></path>
+
+                                    <path
+                                        d="M200 208c-26 0-40-15-40-40 26 0 40 14 40 40z"
+                                        opacity=".65"
+                                    ></path>
+
+                                </g>
+
+                                <g
+                                    opacity=".85"
+                                    stroke="var(--beige)"
+                                    stroke-width="1.3"
+                                >
+
+                                    <path d="M96 244h208"></path>
+
+                                    <path
+                                        d="M112 258h176"
+                                        opacity=".55"
+                                    ></path>
+
+                                    <path
+                                        d="M128 244v-22M296 244v-30"
+                                        opacity=".5"
+                                    ></path>
+
+                                </g>
+
+                                <g
+                                    opacity=".5"
+                                    stroke="var(--area)"
+                                    stroke-width="1"
+                                >
+
+                                    <circle
+                                        cx="118"
+                                        cy="104"
+                                        r="16"
+                                    ></circle>
+
+                                    <path d="M112 104h12M118 98v12"></path>
+
+                                    <circle
+                                        cx="300"
+                                        cy="128"
+                                        r="12"
+                                    ></circle>
+
+                                    <path d="M295 128h10"></path>
+
+                                </g>
+
+                            </svg>
+
+                        </div>
+
+                        <div class="cena__corpo">
+
+                            <span class="eyebrow">
+
+                                O que é
+
+                            </span>
+
+                            <h2>
+
+                                Biotecnologia<br>
+
+                                <span class="italico">verde</span>
+
+                            </h2>
+
+                            <div>
+
+                                <p>
+
+                                    A biotecnologia verde aplica ciência ao campo:
+                                    melhoramento de plantas, cultivares aprimoradas,
+                                    insumos biológicos e diagnóstico de solo e pragas.
+
+                                </p>
+
+                                <p>
+
+                                    O objetivo é produzir mais alimento na mesma área,
+                                    com menos perdas e menor dependência de insumos químicos
+                                    — algo decisivo para países de agricultura tropical.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section
+                    class="fundo faixa"
+                    data-secao="aplicacoes"
+                >
+
+                    <div class="cabecalho-dividido">
+
+                        <div class="cabecalho-dividido__esquerda">
+
+                            <div>
+
+                                <h2 class="revelar">
+
+                                    Principais<br>
+
+                                    <span class="italico">
+
+                                        aplicações
+
+                                    </span>
+
+                                </h2>
+
+                                <p
+                                    class="revelar"
+                                    data-atraso="1"
+                                >
+
+                                    Onde a biotecnologia verde já atua hoje.
+
+                                </p>
+
+                            </div>
+
+                            <button
+                                class="link revelar"
+                                data-atraso="2"
+                                data-rolagem="processo"
+                            >
+
+                                <span>Como funciona</span>
+
+                                <svg
+                                    fill="none"
+                                    viewbox="0 0 34 8"
+                                >
+
+                                    <path
+                                        d="M0 4h30M26 1l4 3-4 3"
+                                        stroke="currentColor"
+                                    ></path>
+
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+                        <div class="grade-cartoes">
+
+                            <article
+                                class="cartao-tematico revelar"
+                                data-atraso="1"
+                            >
+
+                                <span class="cartao-tematico__numero">
+
+                                    01
+
+                                </span>
+
+                                <h3>
+
+                                    Melhoramento genético
+
+                                </h3>
+
+                                <p>
+
+                                    Variedades com maior resistência a pragas,
+                                    secas e doenças.
+
+                                </p>
+
+                            </article>
+
+                            <article
+                                class="cartao-tematico revelar"
+                                data-atraso="2"
+                            >
+
+                                <span class="cartao-tematico__numero">
+
+                                    02
+
+                                </span>
+
+                                <h3>
+
+                                    Culturas geneticamente aprimoradas
+
+                                </h3>
+
+                                <p>
+
+                                    Plantas desenvolvidas para maior produtividade
+                                    e valor nutricional.
+
+                                </p>
+
+                            </article>
+
+                            <article
+                                class="cartao-tematico revelar"
+                                data-atraso="3"
+                            >
+
+                                <span class="cartao-tematico__numero">
+
+                                    03
+
+                                </span>
+
+                                <h3>
+
+                                    Biofertilizantes
+
+                                </h3>
+
+                                <p>
+
+                                    Microrganismos que aumentam a disponibilidade
+                                    de nutrientes no solo.
+
+                                </p>
+
+                            </article>
+
+                            <article
+                                class="cartao-tematico revelar"
+                                data-atraso="4"
+                            >
+
+                                <span class="cartao-tematico__numero">
+
+                                    04
+
+                                </span>
+
+                                <h3>
+
+                                    Biopesticidas
+
+                                </h3>
+
+                                <p>
+
+                                    Controle biológico de pragas com menor
+                                    impacto ambiental.
+
+                                </p>
+
+                            </article>
+
+                            <article
+                                class="cartao-tematico revelar"
+                                data-atraso="4"
+                            >
+
+                                <span class="cartao-tematico__numero">
+
+                                    05
+
+                                </span>
+
+                                <h3>
+
+                                    Agricultura de precisão
+
+                                </h3>
+
+                                <p>
+
+                                    Dados biológicos aplicados ao manejo
+                                    de cada talhão.
+
+                                </p>
+
+                            </article>
+
+                            <article
+                                class="cartao-tematico revelar"
+                                data-atraso="4"
+                            >
+
+                                <span class="cartao-tematico__numero">
+
+                                    06
+
+                                </span>
+
+                                <h3>
+
+                                    Segurança alimentar
+
+                                </h3>
+
+                                <p>
+
+                                    Soluções que sustentam a produção de
+                                    alimentos em larga escala.
+
+                                </p>
+
+                            </article>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section
+                    class="fundo faixa"
+                    data-secao="processo"
+                >
+
+                    <div class="cabecalho-dividido">
+
+                        <div class="cabecalho-dividido__esquerda">
+
+                            <div>
+
+                                <h2 class="revelar">
+
+                                    Como<br>
+
+                                    <span class="italico">
+
+                                        funciona
+
+                                    </span>
+
+                                </h2>
+
+                                <p
+                                    class="revelar"
+                                    data-atraso="1"
+                                >
+
+                                    O caminho da pesquisa até a aplicação,
+                                    em quatro etapas.
+
+                                </p>
+
+                            </div>
+
+                            <button
+                                class="link revelar"
+                                data-atraso="2"
+                                data-rolagem="exemplos"
+                            >
+
+                                <span>Ver exemplos</span>
+
+                                <svg
+                                    fill="none"
+                                    viewbox="0 0 34 8"
+                                >
+
+                                    <path
+                                        d="M0 4h30M26 1l4 3-4 3"
+                                        stroke="currentColor"
+                                    ></path>
+
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+                        <div class="etapas">
+
+                            <article
+                                class="etapa revelar"
+                                data-atraso="1"
+                            >
+
+                                <span class="etapa__numero">
+
+                                    01
+
+                                </span>
+
+                                <h3>
+
+                                    Mapear a característica
+
+                                </h3>
+
+                                <p>
+
+                                    Identifica-se o gene ou a região do genoma
+                                    ligada à resistência, produtividade ou qualidade.
+
+                                </p>
+
+                            </article>
+
+                            <article
+                                class="etapa revelar"
+                                data-atraso="2"
+                            >
+
+                                <span class="etapa__numero">
+
+                                    02
+
+                                </span>
+
+                                <h3>
+
+                                    Selecionar ou editar
+
+                                </h3>
+
+                                <p>
+
+                                    Usa-se seleção assistida por marcadores,
+                                    cruzamento dirigido ou edição genética precisa.
+
+                                </p>
+
+                            </article>
+
+                            <article
+                                class="etapa revelar"
+                                data-atraso="3"
+                            >
+
+                                <span class="etapa__numero">
+
+                                    03
+
+                                </span>
+
+                                <h3>
+
+                                    Testar em campo
+
+                                </h3>
+
+                                <p>
+
+                                    As linhagens passam por ensaios em diferentes
+                                    solos e climas por várias safras.
+
+                                </p>
+
+                            </article>
+
+                            <article
+                                class="etapa revelar"
+                                data-atraso="4"
+                            >
+
+                                <span class="etapa__numero">
+
+                                    04
+
+                                </span>
+
+                                <h3>
+
+                                    Liberar e monitorar
+
+                                </h3>
+
+                                <p>
+
+                                    Após avaliação de biossegurança, a cultivar
+                                    é liberada e acompanhada em uso comercial.
+
+                                </p>
+
+                            </article>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section
+                    class="fundo faixa"
+                    data-secao="exemplos"
+                >
+
+                    <div class="cena cena--invertida revelar">
+
+                        <div class="cena__visual">
+
+                            <svg
+                                aria-label="Aplicações reais da biotecnologia verde"
+                                class="cena__arte"
+                                fill="none"
+                                role="img"
+                                viewbox="0 0 400 300"
+                            >
+
+                                <defs>
+
+                                    <lineargradient
+                                        id="gagricola-b"
+                                        x1="0"
+                                        x2="1"
+                                        y1="0"
+                                        y2="1"
+                                    >
+
+                                        <stop
+                                            offset="0"
+                                            stop-color="var(--area)"
+                                            stop-opacity=".28"
+                                        ></stop>
+
+                                        <stop
+                                            offset="1"
+                                            stop-color="var(--area)"
+                                            stop-opacity="0"
+                                        ></stop>
+
+                                    </lineargradient>
+
+                                    <radialgradient
+                                        cx="50%"
+                                        cy="45%"
+                                        id="ragricola-b"
+                                        r="55%"
+                                    >
+
+                                        <stop
+                                            offset="0"
+                                            stop-color="var(--area)"
+                                            stop-opacity=".38"
+                                        ></stop>
+
+                                        <stop
+                                            offset="1"
+                                            stop-color="var(--area)"
+                                            stop-opacity="0"
+                                        ></stop>
+
+                                    </radialgradient>
+
+                                </defs>
+
+                                <rect
+                                    fill="url(#ragricola-b)"
+                                    height="300"
+                                    width="400"
+                                ></rect>
+
+                                <g
+                                    stroke="var(--area)"
+                                    stroke-width="1.5"
+                                >
+
+                                    <path d="M200 244V116"></path>
+
+                                    <path d="M200 168c-34 0-52-20-52-52 34 0 52 18 52 52z"></path>
+
+                                    <path d="M200 146c34 0 52-20 52-52-34 0-52 18-52 52z"></path>
+
+                                    <path
+                                        d="M200 208c-26 0-40-15-40-40 26 0 40 14 40 40z"
+                                        opacity=".65"
+                                    ></path>
+
+                                </g>
+
+                                <g
+                                    opacity=".85"
+                                    stroke="var(--beige)"
+                                    stroke-width="1.3"
+                                >
+
+                                    <path d="M96 244h208"></path>
+
+                                    <path
+                                        d="M112 258h176"
+                                        opacity=".55"
+                                    ></path>
+
+                                    <path
+                                        d="M128 244v-22M296 244v-30"
+                                        opacity=".5"
+                                    ></path>
+
+                                </g>
+
+                                <g
+                                    opacity=".5"
+                                    stroke="var(--area)"
+                                    stroke-width="1"
+                                >
+
+                                    <circle
+                                        cx="118"
+                                        cy="104"
+                                        r="16"
+                                    ></circle>
+
+                                    <path d="M112 104h12M118 98v12"></path>
+
+                                    <circle
+                                        cx="300"
+                                        cy="128"
+                                        r="12"
+                                    ></circle>
+
+                                    <path d="M295 128h10"></path>
+
+                                </g>
+
+                            </svg>
+
+                        </div>
+
+                        <div class="cena__corpo">
+
+                            <span class="eyebrow">
+
+                                No mundo real
+
+                            </span>
+
+                            <h2>
+
+                                Onde a ciência<br>
+
+                                <span class="italico">
+
+                                    já chegou
+
+                                </span>
+
+                            </h2>
+
+                            <div
+                                class="cartao-lista"
+                                style="padding:0;grid-template-columns:1fr;gap:12px;margin-top:8px"
+                            >
+
+                                <div>
+
+                                    <b>01</b>
+
+                                    <p>
+
+                                        <strong
+                                            style="color:var(--text);font-weight:600"
+                                        >
+
+                                            Plantas Bt.
+
+                                        </strong>
+
+                                        Culturas que produzem uma proteína
+                                        inseticida natural de bactéria do solo,
+                                        reduzindo a pulverização.
+
+                                    </p>
+
+                                </div>
+
+                                <div>
+
+                                    <b>02</b>
+
+                                    <p>
+
+                                        <strong
+                                            style="color:var(--text);font-weight:600"
+                                        >
+
+                                            Fixação biológica de nitrogênio.
+
+                                        </strong>
+
+                                        Bactérias inoculadas nas raízes fornecem
+                                        nitrogênio à planta e dispensam parte do adubo.
+
+                                    </p>
+
+                                </div>
+
+                                <div>
+
+                                    <b>03</b>
+
+                                    <p>
+
+                                        <strong
+                                            style="color:var(--text);font-weight:600"
+                                        >
+
+                                            Biopesticidas.
+
+                                        </strong>
+
+                                        Fungos e vírus específicos controlam pragas
+                                        sem atingir polinizadores e inimigos naturais.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section
+                    class="fundo faixa"
+                    data-secao="marcos"
+                >
+
+                    <div class="cabecalho-dividido">
+
+                        <div class="cabecalho-dividido__esquerda">
+
+                            <div>
+
+                                <h2 class="revelar">
+
+                                    Marcos que<br>
+
+                                    <span class="italico">
+
+                                        abriram caminho
+
+                                    </span>
+
+                                </h2>
+
+                                <p
+                                    class="revelar"
+                                    data-atraso="1"
+                                >
+
+                                    Datas verificáveis da trajetória desta área.
+
+                                </p>
+
+                            </div>
+
+                            <button
+                                class="link revelar"
+                                data-atraso="2"
+                                data-rolagem="outras"
+                            >
+
+                                <span>Outras áreas</span>
+
+                                <svg
+                                    fill="none"
+                                    viewbox="0 0 34 8"
+                                >
+
+                                    <path
+                                        d="M0 4h30M26 1l4 3-4 3"
+                                        stroke="currentColor"
+                                    ></path>
+
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+                        <div class="fatos">
+
+                            <article
+                                class="fato revelar"
+                                data-atraso="1"
+                            >
+
+                                <b>1983</b>
+
+                                <p>
+
+                                    As primeiras plantas geneticamente modificadas
+                                    são obtidas em laboratório.
+
+                                </p>
+
+                            </article>
+
+                            <article
+                                class="fato revelar"
+                                data-atraso="2"
+                            >
+
+                                <b>1994</b>
+
+                                <p>
+
+                                    Um tomate de amadurecimento retardado torna-se
+                                    o primeiro alimento transgênico aprovado para venda.
+
+                                </p>
+
+                            </article>
+
+                            <article
+                                class="fato revelar"
+                                data-atraso="3"
+                            >
+
+                                <b>1996</b>
+
+                                <p>
+
+                                    Começa o cultivo comercial em larga escala de
+                                    soja e milho geneticamente modificados.
+
+                                </p>
+
+                            </article>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section
+                    class="faixa"
+                    style="padding:0 0 0 0"
+                >
+
+                    <div class="citacao revelar">
+
+                        <p class="citacao__principal">
+
+                            A fixação biológica de nitrogênio feita por bactérias
+                            em raízes de leguminosas economiza ao Brasil uma quantidade
+                            enorme de fertilizante nitrogenado importado todos os anos.
+
+                        </p>
+
+                        <div class="citacao__lateral">
+
+                            <div>
+
+                                <b>Parceria antiga</b>
+
+                                <p>
+
+                                    A simbiose entre plantas e bactérias fixadoras
+                                    de nitrogênio existe há mais de 60 milhões de anos.
+
+                                </p>
+
+                            </div>
+
+                            <div>
+
+                                <b>Banco vivo</b>
+
+                                <p>
+
+                                    Bancos de germoplasma guardam sementes de variedades
+                                    tradicionais como seguro genético do futuro.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section
+                    class="central faixa"
+                    data-secao="outras"
+                >
+
+                    <h4>
+
+                        Explore as outras áreas
+
+                    </h4>
+
+                    <div class="central__linha">
+
+                        <button
+                            class="central__item"
+                            data-pagina="saude"
+                        >
+
+                            <i style="background:#a8432a"></i>
+
+                            Vermelha — Saúde Humana
+
+                        </button>
+
+                        <button
+                            class="central__item"
+                            data-pagina="industrial"
+                        >
+
+                            <i style="background:#6e685c"></i>
+
+                            Branca — Industrial
+
+                        </button>
+
+                        <button
+                            class="central__item atual"
+                            data-pagina="agricola"
+                        >
+
+                            <i style="background:#5f6b37"></i>
+
+                            Verde — Agricultura
+
+                        </button>
+
+                        <button
+                            class="central__item"
+                            data-pagina="marinha"
+                        >
+
+                            <i style="background:#2e5b78"></i>
+
+                            Azul — Recursos Marinhos
+
+                        </button>
+
+                        <button
+                            class="central__item"
+                            data-pagina="alimentar"
+                        >
+
+                            <i style="background:#a97c22"></i>
+
+                            Amarela — Alimentos e Fermentação
+
+                        </button>
+
+                        <button
+                            class="central__item"
+                            data-pagina="ambiental"
+                        >
+
+                            <i style="background:#625d54"></i>
+
+                            Cinza — Meio Ambiente
+
+                        </button>
+
+                        <button
+                            class="central__item"
+                            data-pagina="bioinformatica"
+                        >
+
+                            <i style="background:#8f7238"></i>
+
+                            Dourada — Bioinformática e Nanotecnologia
+
+                        </button>
+
+                        <button
+                            class="central__item"
+                            data-pagina="etica"
+                        >
+
+                            <i style="background:#6b5470"></i>
+
+                            Roxa — Ética e Regulamentação
+
+                        </button>
+
+                        <button
+                            class="central__item"
+                            data-pagina="florestal"
+                        >
+
+                            <i style="background:#6b4c32"></i>
+
+                            Marrom — Florestal
+
+                        </button>
+
+                        <button
+                            class="central__item"
+                            data-pagina="forense"
+                        >
+
+                            <i style="background:#48453f"></i>
+
+                            Preta — Forense e Criminalística
+
+                        </button>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </main>
+
+        <footer class="rodape">
+
+            <div class="rodape__marca">
+
+                <svg
+                    class="rodape__selo"
+                    fill="none"
+                    viewbox="0 0 60 60"
+                >
+
+                    <circle
+                        cx="30"
+                        cy="30"
+                        r="26"
+                        stroke="var(--line)"
+                        stroke-width="1"
+                    ></circle>
+
+                    <circle
+                        cx="30"
+                        cy="30"
+                        r="21"
+                        stroke="var(--line)"
+                        stroke-dasharray="2 5"
+                        stroke-width="1"
+                    ></circle>
+
+                    <g
+                        stroke="var(--beige)"
+                        stroke-linecap="round"
+                        stroke-width="1.6"
+                    >
+
+                        <path d="M22 17c0 6 16 7 16 13s-16 7-16 13"></path>
+
+                        <path d="M38 17c0 6-16 7-16 13s16 7 16 13"></path>
+
+                    </g>
+
+                </svg>
+
+                <div>
+
+                    <div
+                        class="marca__nome"
+                        style="font-size:15px"
+                    >
+
+                        Prometheus
+
+                    </div>
+
+                    <div
+                        class="marca__subtitulo"
+                        style="margin-top:5px"
+                    >
+
+                        Biotecnologia para um futuro melhor
+
+                    </div>
+
+                </div>
+
+                <p>
+
+                    O conhecimento é a nossa chama. A biotecnologia é o nosso fogo.
+                    O futuro é a nossa escolha.
+
+                </p>
+
+            </div>
+
+            <div class="rodape__colunas">
+
+                <div class="coluna-rodape">
+
+                    <h4>Navegar</h4>
+
+                    <a
+                        data-alvo-secao="inicio"
+                        data-pagina="home"
+                        href="../../index.html#inicio"
+                    >
+
+                        Início
+
+                    </a>
+
+                    <a
+                        data-alvo-secao="areas"
+                        data-pagina="home"
+                        href="../../index.html#areas"
+                    >
+
+                        Áreas
+
+                    </a>
+
+                    <a
+                        data-alvo-secao="aplicacoes"
+                        data-pagina="home"
+                        href="../../index.html#aplicacoes"
+                    >
+
+                        Aplicações
+
+                    </a>
+
+                    <a
+                        data-alvo-secao="noticias"
+                        data-pagina="home"
+                        href="../../index.html#noticias"
+                    >
+
+                        Notícias
+
+                    </a>
+
+                    <a
+                        data-alvo-secao="sobre"
+                        data-pagina="home"
+                        href="../../index.html#sobre"
+                    >
+
+                        Sobre
+
+                    </a>
+
+                    <a
+                        data-alvo-secao="contato"
+                        data-pagina="home"
+                        href="../../index.html#contato"
+                    >
+
+                        Contato
+
+                    </a>
+
+                </div>
+
+                <div class="coluna-rodape">
+
+                    <h4>Áreas</h4>
+
+                    <button
+                        data-pagina="saude"
+                        style="text-align:left"
+                    >
+
+                        Saúde Humana
+
+                    </button>
+
+                    <button
+                        data-pagina="industrial"
+                        style="text-align:left"
+                    >
+
+                        Industrial
+
+                    </button>
+
+                    <button
+                        data-pagina="agricola"
+                        style="text-align:left"
+                    >
+
+                        Agricultura
+
+                    </button>
+
+                    <button
+                        data-pagina="marinha"
+                        style="text-align:left"
+                    >
+
+                        Recursos Marinhos
+
+                    </button>
+
+                    <button
+                        data-pagina="alimentar"
+                        style="text-align:left"
+                    >
+
+                        Alimentos e Fermentação
+
+                    </button>
+
+                    <button
+                        data-pagina="ambiental"
+                        style="text-align:left"
+                    >
+
+                        Meio Ambiente
+
+                    </button>
+
+                    <button
+                        data-pagina="bioinformatica"
+                        style="text-align:left"
+                    >
+
+                        Bioinformática e Nanotecnologia
+
+                    </button>
+
+                    <button
+                        data-pagina="etica"
+                        style="text-align:left"
+                    >
+
+                        Ética e Regulamentação
+
+                    </button>
+
+                    <button
+                        data-pagina="florestal"
+                        style="text-align:left"
+                    >
+
+                        Florestal
+
+                    </button>
+
+                    <button
+                        data-pagina="forense"
+                        style="text-align:left"
+                    >
+
+                        Forense e Criminalística
+
+                    </button>
+
+                </div>
+
+                <div class="coluna-rodape">
+
+                    <h4>Conecte-se</h4>
+
+                    <div class="redes-sociais">
+
+                        <a
+                            aria-label="Instagram"
+                            href="#"
+                        >
+
+                            <svg viewbox="0 0 24 24">
+
+                                <path d="M12 2c2.7 0 3 0 4.1.1 1.1 0 1.8.2 2.4.5.7.2 1.2.6 1.7 1.1s.9 1 1.1 1.7c.3.6.4 1.3.5 2.4C22 8.9 22 9.3 22 12s0 3-.1 4.1c0 1.1-.2 1.8-.5 2.4-.2.7-.6 1.2-1.1 1.7s-1 .9-1.7 1.1c-.6.2-1.3.4-2.4.5-1.1.1-1.4.1-4.1.1s-3 0-4.1-.1c-1.1 0-1.8-.2-2.4-.5-.7-.2-1.2-.6-1.7-1.1s-.9-1-1.1-1.7c-.3-.6-.4-1.3-.5-2.4C2 15 2 14.7 2 12s0-3 .1-4.1c0-1.1.2-1.8.5-2.4.2-.7.6-1.2 1.1-1.7s1-.9 1.7-1.1c.6-.3 1.3-.4 2.4-.5C9 2 9.3 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zM18.4 6.8a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"></path>
+
+                            </svg>
+
+                        </a>
+
+                        <a
+                            aria-label="LinkedIn"
+                            href="#"
+                        >
+
+                            <svg viewbox="0 0 24 24">
+
+                                <path d="M4.98 3.5A2.5 2.5 0 1 0 5 8.5a2.5 2.5 0 0 0 0-5zM3 9h4v12H3zM10 9h3.8v1.7h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.5 4.7 5.8V21h-4v-5.7c0-1.4 0-3.2-2-3.2s-2.3 1.5-2.3 3.1V21h-4z"></path>
+
+                            </svg>
+
+                        </a>
+
+                        <a
+                            aria-label="E-mail"
+                            href="#"
+                        >
+
+                            <svg viewbox="0 0 24 24">
+
+                                <path d="M2 5h20v14H2zm2 2v.3l8 5.2 8-5.2V7z"></path>
+
+                            </svg>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div
+                class="rodape__chamada"
+                data-secao="contato"
+            >
+
+                <h3>
+
+                    A evolução começa<br>
+
+                    <span class="italico">
+
+                        com uma escolha.
+
+                    </span>
+
+                </h3>
+
+                <button
+                    class="link"
+                    data-rolagem="inicio"
+                >
+
+                    <span>Voltar ao topo</span>
+
+                    <svg
+                        fill="none"
+                        viewbox="0 0 34 8"
+                    >
+
+                        <path
+                            d="M0 4h30M26 1l4 3-4 3"
+                            stroke="currentColor"
+                        ></path>
+
+                    </svg>
+
+                </button>
+
+            </div>
+
+        </footer>
+
+        <div class="informacoes-legais">
+
+            <span>
+
+                © 2026 Prometheus Biotecnologia
+
+            </span>
+
+            <span>
+
+                <a href="#">Privacidade</a>
+
+                ·
+
+                <a href="#">Termos</a>
+
+                ·
+
+                <a href="#">Ética em pesquisa</a>
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <div
+        aria-hidden="true"
+        aria-labelledby="dnaTitle"
+        aria-modal="true"
+        class="janela-dna"
+        id="dnaModal"
+        role="dialog"
+    >
+
+        <div class="janela-dna__fundo"></div>
+
+        <div class="janela-dna__painel">
+
+            <button
+                aria-label="Fechar"
+                class="janela-dna__fechar"
+                data-atrasona-close=""
+            >
+
+                <svg viewbox="0 0 14 14">
+
+                    <path
+                        d="M1 1l12 12M13 1L1 13"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                    ></path>
+
+                </svg>
+
+            </button>
+
+            <span class="eyebrow">
+
+                Estrutura da molécula
+
+            </span>
+
+            <h3 id="dnaTitle">
+
+                Do DNA ao
+
+                <span class="italico">
+
+                    nucleotídeo
+
+                </span>
+
+            </h3>
+
+            <p class="janela-dna__descricao">
+
+                O DNA é uma longa cadeia formada por unidades repetidas chamadas
+                nucleotídeos. Cada nucleotídeo carrega, entre outras partes,
+                uma base nitrogenada — e é a sequência dessas bases que guarda
+                toda a informação genética.
+
+            </p>
+
+            <div class="fluxo-dna">
+
+                <b class="destacado">
+
+                    DNA
+
+                </b>
+
+                <svg viewbox="0 0 20 10">
+
+                    <path d="M0 5h16M12 1l4 4-4 4"></path>
+
+                </svg>
+
+                <b>
+
+                    Nucleotídeos
+
+                </b>
+
+                <svg viewbox="0 0 20 10">
+
+                    <path d="M0 5h16M12 1l4 4-4 4"></path>
+
+                </svg>
+
+                <b>
+
+                    Bases nitrogenadas
+
+                </b>
+
+            </div>
+
+            <div class="nucleo">
+
+                <div class="nucleo__parte">
+
+                    <span class="nucleo__forma p">
+
+                        <svg viewbox="0 0 24 24">
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="7"
+                            ></circle>
+
+                        </svg>
+
+                    </span>
+
+                    <span>
+
+                        Grupo fosfato
+
+                    </span>
+
+                </div>
+
+                <span class="nucleo__mais">
+
+                    +
+
+                </span>
+
+                <div class="nucleo__parte">
+
+                    <span class="nucleo__forma s">
+
+                        <svg viewbox="0 0 24 24">
+
+                            <path d="M4 8l8-5 8 5-8 5z"></path>
+
+                            <path d="M4 8v8l8 5 8-5V8"></path>
+
+                        </svg>
+
+                    </span>
+
+                    <span>
+
+                        Açúcar (desoxirribose)
+
+                    </span>
+
+                </div>
+
+                <span class="nucleo__mais">
+
+                    +
+
+                </span>
+
+                <div class="nucleo__parte">
+
+                    <span class="nucleo__forma b">
+
+                        <svg viewbox="0 0 24 24">
+
+                            <path d="M12 3l8 6-3 9H7L4 9z"></path>
+
+                        </svg>
+
+                    </span>
+
+                    <span>
+
+                        Base nitrogenada
+
+                    </span>
+
+                </div>
+
+                <span class="nucleo__mais">
+
+                    =
+
+                </span>
+
+                <div class="nucleo__parte">
+
+                    <span class="nucleo__forma p">
+
+                        <svg viewbox="0 0 24 24">
+
+                            <path
+                                d="M12 2v20M2 12h20"
+                                stroke-width="2.4"
+                            ></path>
+
+                        </svg>
+
+                    </span>
+
+                    <span>
+
+                        Nucleotídeo
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <span
+                class="eyebrow"
+                style="display:block;margin-bottom:12px"
+            >
+
+                Pareamento das bases
+
+            </span>
+
+            <div class="bases">
+
+                <div class="base">
+
+                    <b>A</b>
+
+                    <em>Adenina</em>
+
+                    <small>pareia com T</small>
+
+                </div>
+
+                <div class="base">
+
+                    <b>T</b>
+
+                    <em>Timina</em>
+
+                    <small>pareia com A</small>
+
+                </div>
+
+                <div class="base">
+
+                    <b>C</b>
+
+                    <em>Citosina</em>
+
+                    <small>pareia com G</small>
+
+                </div>
+
+                <div class="base">
+
+                    <b>G</b>
+
+                    <em>Guanina</em>
+
+                    <small>pareia com C</small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="../../script.js"></script>
+
+</body>
+
+</html>
