@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#071317" />
+    <meta
+      name="description"
+      content="SURTO — Protocolo Prometheus: jogo 3D educativo de investigação científica, biotecnologia e resposta a surtos."
+    />
+    <title>SURTO — Protocolo Prometheus</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/styles.css?v=3.0.2" />
+  </head>
+  <body>
+
+
+    <main id="game-shell" data-quality="medium">
+      <canvas id="game-canvas" aria-label="Laboratório tridimensional do Protocolo Prometheus"></canvas>
+      <div class="scene-filter" aria-hidden="true"></div>
+
+      <section id="boot-screen" class="screen screen--boot is-visible" aria-labelledby="game-title">
+        <div class="boot-grid" aria-hidden="true"></div>
+        <div class="boot-brand">
+          <div class="protocol-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+          <p class="eyebrow">ARQUIVO P-08 · SIMULAÇÃO DE CONTENÇÃO</p>
+          <h1 id="game-title"><span>SURTO</span><small>PROTOCOLO PROMETHEUS</small></h1>
+          <p class="boot-copy">Uma assinatura genética desconhecida. Uma cidade em risco. Suas decisões definirão o que acontece depois.</p>
+          <div class="boot-actions">
+            <button id="continue-button" class="button button--primary" hidden>
+              <span>CONTINUAR INVESTIGAÇÃO</span><kbd>↵</kbd>
+            </button>
+            <button id="start-button" class="button button--primary" disabled>
+              <span>NOVA INVESTIGAÇÃO</span><kbd>↵</kbd>
+            </button>
+            <button class="button button--quiet" data-open-settings>CONFIGURAÇÕES</button>
+          </div>
+          <p id="save-summary" class="save-summary" hidden></p>
+          <p id="load-status" class="load-status"><span></span> Preparando laboratório…</p>
+          <p class="simulation-note">Cenário fictício · modelo educacional simplificado · não representa protocolo clínico real</p>
+        </div>
+        <div class="boot-meta" aria-label="Informações da campanha">
+          <span>ARQUIVOS</span><strong>08 CAPÍTULOS</strong>
+          <span>DURAÇÃO</span><strong>30–45 MIN</strong>
+          <span>PROGRESSO</span><strong id="boot-progress">NÃO INICIADO</strong>
+          <span>ESTADO</span><strong id="system-state">INICIALIZANDO</strong>
+        </div>
+      </section>
+
+      <section id="alert-screen" class="screen screen--alert" aria-labelledby="alert-title">
+        <div class="alert-card">
+          <div class="alert-icon" aria-hidden="true">!</div>
+          <p class="eyebrow eyebrow--amber">REDE SENTINELA · PRIORIDADE 1</p>
+          <h2 id="alert-title">ALERTA BIOLÓGICO</h2>
+          <div class="case-count"><strong>03</strong><span>CASOS<br />SUSPEITOS</span></div>
+          <p>Os pacientes chegaram em menos de duas horas e apresentam um padrão incomum.</p>
+          <dl class="alert-data">
+            <div><dt>LOCAL</dt><dd>SETOR AURORA</dd></div>
+            <div><dt>HORÁRIO</dt><dd>23:17</dd></div>
+            <div><dt>AGENTE</dt><dd>NÃO IDENTIFICADO</dd></div>
+          </dl>
+          <button id="enter-lab-button" class="button button--primary">ENTRAR NO LABORATÓRIO</button>
+        </div>
+      </section>
+
+      <section id="chapter-screen" class="screen screen--chapter" aria-labelledby="chapter-title">
+        <div class="chapter-card">
+          <div class="chapter-number"><small>CAPÍTULO</small><strong id="chapter-index">02</strong></div>
+          <div class="chapter-copy">
+            <p id="chapter-code" class="eyebrow">ARQUIVO P-02</p>
+            <h2 id="chapter-title">A AMOSTRA</h2>
+            <p id="chapter-description"></p>
+            <div id="chapter-concepts" class="chapter-concepts"></div>
+            <button id="chapter-continue" class="button button--primary">CONTINUAR</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="hud" class="hud" aria-label="Informações da missão" hidden>
+        <div class="hud-top">
+          <div class="mission-card">
+            <div class="mission-heading">
+              <span class="signal-dot" aria-hidden="true"></span>
+              <span id="mission-label">CAPÍTULO 01</span>
+              <span id="mission-progress">1/12</span>
+            </div>
+            <p id="mission-objective">Localize a Dra. Helena.</p>
+          </div>
+          <div class="status-strip" aria-label="Estado da investigação">
+            <div><span>DIA</span><strong id="hud-day">01</strong></div>
+            <div><span>CASOS</span><strong id="hud-cases">03</strong></div>
+            <div><span>CONTÁGIO</span><strong id="hud-contagion">18%</strong></div>
+            <div><span>RECURSOS</span><strong id="hud-resources">100</strong></div>
+            <div><span>CONHEC.</span><strong id="hud-knowledge">08%</strong></div>
+            <div><span>VACINAÇÃO</span><strong id="hud-vaccination">0%</strong></div>
+          </div>
+        </div>
+
+        <div id="reticle" class="reticle" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div id="interaction-prompt" class="interaction-prompt" hidden>
+          <kbd>E</kbd><span id="interaction-label">INTERAGIR</span>
+        </div>
+
+        <div id="inventory-chip" class="inventory-chip" hidden>
+          <span class="sample-vial" aria-hidden="true"></span>
+          <div><small id="inventory-label">TRANSPORTANDO</small><strong id="inventory-name">AMOSTRA #001</strong></div>
+        </div>
+
+        <div id="control-hint" class="control-hint">
+          <span><kbd>WASD</kbd> MOVER</span>
+          <span><span class="mouse-icon" aria-hidden="true"></span> OLHAR</span>
+          <span><kbd>E</kbd> INTERAGIR</span>
+        </div>
+
+        <div class="hud-actions">
+          <button id="knowledge-button" class="icon-button" aria-label="Abrir banco de conhecimento">
+            <span aria-hidden="true">⌘</span><span>BANCO</span>
+          </button>
+          <button id="pause-button" class="icon-button" aria-label="Pausar jogo">
+            <span aria-hidden="true">Ⅱ</span><span>PAUSA</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="dialogue" class="dialogue" aria-live="polite" hidden>
+        <div class="speaker-portrait" aria-hidden="true"><span id="speaker-initial">H</span></div>
+        <div class="dialogue-content">
+          <div class="dialogue-meta"><strong id="speaker-name">DRA. HELENA</strong><span id="speaker-role">DIRETORA CIENTÍFICA</span></div>
+          <p id="dialogue-text"></p>
+          <div class="dialogue-actions">
+            <span id="dialogue-counter">1 / 2</span>
+            <button id="dialogue-next" class="text-button">CONTINUAR <kbd>↵</kbd></button>
+          </div>
+        </div>
+      </section>
+
+      <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+      <div id="knowledge-unlock" class="knowledge-unlock" role="status" hidden>
+        <span class="unlock-icon" aria-hidden="true">+</span>
+        <div><small>NOVO CONHECIMENTO</small><strong id="unlock-title">Amostras biológicas</strong></div>
+        <button id="unlock-more" class="text-button">VER</button>
+      </div>
+
+      <div id="touch-controls" class="touch-controls" aria-label="Controles por toque" hidden>
+        <div id="touch-stick" class="touch-stick"><span></span></div>
+        <button id="touch-action" class="touch-action" aria-label="Interagir">E</button>
+      </div>
+
+      <dialog id="panel-dialog" class="game-dialog game-dialog--mission">
+        <div id="panel-content"></div>
+      </dialog>
+
+      <dialog id="knowledge-dialog" class="game-dialog game-dialog--wide">
+        <header class="dialog-header">
+          <div><p class="eyebrow">ARQUIVO PROMETHEUS</p><h2>BANCO DE CONHECIMENTO</h2></div>
+          <button class="close-button" data-close-dialog aria-label="Fechar">×</button>
+        </header>
+        <div id="knowledge-list" class="knowledge-layout"></div>
+      </dialog>
+
+      <dialog id="settings-dialog" class="game-dialog">
+        <header class="dialog-header">
+          <div><p class="eyebrow">SISTEMA</p><h2>CONFIGURAÇÕES</h2></div>
+          <button class="close-button" data-close-dialog aria-label="Fechar">×</button>
+        </header>
+        <form id="settings-form" class="settings-grid" method="dialog">
+          <label>
+            <span>QUALIDADE GRÁFICA<small>Altera resolução e detalhes do ambiente.</small></span>
+            <select id="quality-setting">
+              <option value="low">Baixa</option><option value="medium" selected>Média</option><option value="high">Alta</option>
+            </select>
+          </label>
+          <label>
+            <span>VOLUME<small>Sons de interface e ambiente.</small></span>
+            <input id="volume-setting" type="range" min="0" max="100" value="45" />
+          </label>
+          <label>
+            <span>TAMANHO DO TEXTO<small>Aumenta diálogos e informações.</small></span>
+            <select id="text-setting"><option value="normal" selected>Normal</option><option value="large">Grande</option><option value="xlarge">Muito grande</option></select>
+          </label>
+          <label>
+            <span>VELOCIDADE DOS DIÁLOGOS<small>Você pode avançar a qualquer momento.</small></span>
+            <select id="dialogue-speed-setting"><option value="slow">Lenta</option><option value="normal" selected>Normal</option><option value="fast">Rápida</option><option value="instant">Instantânea</option></select>
+          </label>
+          <label class="toggle-row">
+            <span>REDUZIR EFEITOS<small>Limita pulsos, tremores e movimento de interface.</small></span>
+            <input id="effects-setting" type="checkbox" role="switch" />
+          </label>
+          <label class="toggle-row">
+            <span>ALTO CONTRASTE<small>Reforça contornos e legibilidade.</small></span>
+            <input id="contrast-setting" type="checkbox" role="switch" />
+          </label>
+          <p class="caption-note"><span>CC</span> Todas as falas possuem legendas em português.</p>
+          <button class="button button--primary" value="close">SALVAR E VOLTAR</button>
+        </form>
+      </dialog>
+
+      <dialog id="pause-dialog" class="game-dialog game-dialog--compact">
+        <div class="pause-heading"><p class="eyebrow">PROTOCOLO SUSPENSO</p><h2>PAUSA</h2></div>
+        <button id="resume-button" class="button button--primary">CONTINUAR</button>
+        <button class="button button--quiet" data-open-settings>CONFIGURAÇÕES</button>
+        <button id="menu-button" class="button button--quiet">SALVAR E VOLTAR AO MENU</button>
+      </dialog>
+
+      <dialog id="report-dialog" class="game-dialog game-dialog--report">
+        <div id="mission-report"></div>
+      </dialog>
+
+      <div id="screen-reader-status" class="sr-only" aria-live="assertive"></div>
+    </main>
+
+    <noscript>Este jogo precisa de JavaScript ativado para funcionar.</noscript>
+    <script type="module" src="assets/js/game.js?v=3.0.2"></script>
+  </body>
+</html>
