@@ -68,7 +68,7 @@ export function createMaterials(tex) {
   // Fontes luminosas (luminárias, LEDs, faixas de sinalização).
   m.lightPanel = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xe6f6f4, emissiveIntensity: 3.2, roughness: 1 });
   m.lightWarm = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffe2b8, emissiveIntensity: 2.6, roughness: 1 });
-  m.amberStrip = new THREE.MeshStandardMaterial({ color: 0x2a1a06, emissive: 0xffa53a, emissiveIntensity: 2.4, roughness: 0.6 });
+  m.amberStrip = new THREE.MeshStandardMaterial({ color: 0x2a1a06, emissive: 0xffa53a, emissiveIntensity: 1.3, roughness: 0.6 });
   m.hazard = new THREE.MeshStandardMaterial({ color: 0xd8a62c, roughness: 0.6 });
   m.ledGreen = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x47ff9a, emissiveIntensity: 3 });
   m.ledRed = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xff4a45, emissiveIntensity: 3 });

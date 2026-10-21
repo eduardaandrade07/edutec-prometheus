@@ -109,7 +109,7 @@ function floorSet(size) {
     const tx = (x % (size / tiles)), ty = (y % (size / tiles));
     const edge = Math.min(tx, ty, size / tiles - tx, size / tiles - ty);
     const groove = clamp01((edge - seam) / (seam * 1.6));
-    const dimples = fbm(u, v, 3, 64, 2) * 0.05;
+    const dimples = fbm(u, v, 3, 64, 2) * 0.012;
     return groove * 0.9 + dimples;
   });
   const mottling = makeField(size, (u, v) => fbm(u, v, 11, 6, 5));

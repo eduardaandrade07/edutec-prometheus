@@ -109,7 +109,7 @@ export class WorldRenderer extends EventTarget {
     this.scene = scene;
     this.fogColor = new THREE.Color(PALETTE[1].fog);
     scene.background = this.fogColor.clone();
-    scene.fog = new THREE.FogExp2(this.fogColor.clone(), 0.024);
+    scene.fog = new THREE.FogExp2(this.fogColor.clone(), 0.017);
 
     // Iluminação baseada em imagem: dá reflexos plausíveis aos metais e vidros.
     const pmrem = new THREE.PMREMGenerator(renderer);
