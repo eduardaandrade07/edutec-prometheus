@@ -1,0 +1,81 @@
+/* Expedição Prometheus — extensões da identidade original. */
+html[data-area="enzimas"] { --area: #df8849; }
+html[data-theme="light"][data-area="enzimas"] { --area: #b55d26; }
+.inicio-area[data-padrao="enzimas"]::before { background-image: repeating-radial-gradient(circle at 72% 43%, transparent 0 23px, var(--area) 23px 24px); opacity: .08; }
+
+.inicio::after {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  z-index: 2;
+  border: 1px solid color-mix(in srgb, var(--beige) 21%, transparent);
+  clip-path: polygon(0 0, 25% 0, 25% 1px, 75% 1px, 75% 0, 100% 0, 100% 100%, 75% 100%, 75% calc(100% - 1px), 25% calc(100% - 1px), 25% 100%, 0 100%);
+  pointer-events: none;
+}
+.inicio__rotulo { font-size: .76rem; }
+.inicio__descricao { font-size: 1rem; line-height: 1.7; }
+.inicio__informacoes span { font-size: .78rem; letter-spacing: .12em; }
+
+.mapa__cabecalho { padding: 22px 26px 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border: 1px solid var(--line); border-bottom: 0; background: var(--bg-2); }
+.mapa__cabecalho span { color: var(--beige); text-transform: uppercase; letter-spacing: .2em; font-size: .78rem; font-weight: 600; }
+.mapa__cabecalho small { color: var(--text-dim); font-size: .85rem; }
+.mapa__vivo { background: var(--bg-2); }
+.mapa__vivo .areas__grade { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; padding: 18px; border: 1px solid var(--line); isolation: isolate; background-image: linear-gradient(to right, color-mix(in srgb, var(--beige) 12%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in srgb, var(--beige) 12%, transparent) 1px, transparent 1px); background-size: 25% 33.333%; }
+.mapa__vivo .area { min-width: 0; min-height: 152px; padding: 16px 17px; text-align: left; align-items: flex-start; gap: 5px; background: color-mix(in srgb, var(--node) 17%, var(--panel)); border: 1px solid color-mix(in srgb, var(--node) 68%, var(--line)); border-bottom: 3px solid var(--node); box-shadow: 0 10px 22px rgba(0,0,0,.11); }
+.mapa__vivo .area:hover, .mapa__vivo .area:focus-visible, .mapa__vivo .area.is-preview { transform: translateY(-5px); filter: none; box-shadow: 0 18px 32px rgba(0,0,0,.24), 0 0 0 1px var(--node); }
+.mapa__vivo .area__icone { color: var(--node); width: 34px; height: 34px; margin-bottom: auto; }
+.mapa__vivo .area h3 { color: var(--text); font-size: 1rem; letter-spacing: .08em; }
+.mapa__vivo .area p { color: var(--text-dim); font-size: .83rem; line-height: 1.3; }
+.mapa__vivo .area__numero { position: absolute; right: 14px; top: 16px; margin: 0; padding: 0; color: var(--node); font-size: .8rem; }
+.mapa__vivo .area:last-child { grid-column: span 2; }
+.mapa__visor { min-height: 215px; padding: 28px 30px; border: 1px solid var(--line); border-top: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 26px; background: var(--panel); box-shadow: inset 4px 0 0 var(--cor-visita, #a8432a); }
+.mapa__visor-numero { font-family: var(--serif); font-style: italic; font-size: clamp(3.8rem, 6vw, 7rem); line-height: 1; color: var(--cor-visita, var(--beige)); }
+.mapa__visor-copy small { color: var(--cor-visita, var(--beige)); text-transform: uppercase; letter-spacing: .2em; font-size: .8rem; }
+.mapa__visor-copy h3 { margin: 7px 0 8px; font-family: var(--serif); font-weight: 400; font-size: clamp(1.8rem, 2.5vw, 2.6rem); }
+.mapa__visor-copy p { margin: 0; color: var(--text-dim); font-size: .96rem; line-height: 1.55; max-width: 55ch; }
+.mapa__visor-acoes { display: grid; gap: 12px; min-width: 150px; }
+.mapa__visor-acoes a { padding: 12px 14px; background: var(--beige); color: var(--on-beige); font-size: .87rem; font-weight: 600; text-align: center; }
+.mapa__visor-acoes span { color: var(--text-dim); font-size: .8rem; text-align: right; }
+.mapa__vivo .area[data-concluida="true"]::after { content: "✓ descoberta"; position: absolute; top: 12px; right: 39px; color: var(--text); font-size: .68rem; letter-spacing: .04em; }
+
+.investigacao { padding: clamp(36px, 5vw, 78px) var(--pad); background: var(--bg-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.investigacao__topo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, .8fr); gap: 40px; align-items: end; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+.investigacao__topo h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(2.2rem, 4vw, 4.3rem); line-height: 1.1; margin: 12px 0 0; }
+.investigacao__topo p { color: var(--text-dim); font-size: 1rem; line-height: 1.65; margin: 0; }
+.investigacao__miolo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, .58fr); gap: 22px; padding-top: 28px; }
+.investigacao__fluxo { padding: 26px; border: 1px solid var(--line); background: var(--panel); }
+.investigacao__rotulo { color: var(--area); font-size: .8rem; text-transform: uppercase; letter-spacing: .17em; }
+.investigacao__origem { display: flex; flex-wrap: wrap; gap: 10px; min-height: 88px; align-items: center; margin: 15px 0 22px; }
+.investigacao__peca { min-height: 50px; background: var(--bg-3); border: 1px solid var(--area); padding: 10px 14px; font-size: .94rem; cursor: grab; text-align: left; }
+.investigacao__peca:hover, .investigacao__peca:focus-visible { background: color-mix(in srgb, var(--area) 23%, var(--bg-3)); }
+.investigacao__destinos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0; margin: 14px 0; list-style: none; }
+.investigacao__destinos li { min-width: 0; }
+.investigacao__destino { width: 100%; min-height: 90px; padding: 12px; border: 1px dashed var(--area); color: var(--text-dim); background: var(--bg); text-align: left; font-size: .9rem; line-height: 1.4; }
+.investigacao__destino b { display: block; color: var(--area); font-size: .75rem; margin-bottom: 8px; }
+.investigacao__destino.has-piece { border-style: solid; color: var(--text); }
+.investigacao__destino.is-certo { border-style: solid; color: var(--text); background: color-mix(in srgb, var(--area) 14%, var(--bg)); cursor: default; }
+.investigacao__destino.is-over { background: color-mix(in srgb, var(--area) 22%, var(--bg)); }
+.investigacao__feedback { min-height: 46px; margin: 0; color: var(--text-dim); font-size: .95rem; line-height: 1.6; }
+.investigacao__reset { border-bottom: 1px solid var(--area); color: var(--area); padding: 6px 0; margin-top: 8px; font-size: .82rem; }
+.investigacao__descoberta { display: flex; flex-direction: column; justify-content: space-between; gap: 22px; padding: 27px; background: color-mix(in srgb, var(--area) 16%, var(--panel)); border: 1px solid var(--area); }
+.investigacao__descoberta > span { font-family: var(--serif); font-size: 3.8rem; font-style: italic; line-height: .8; color: var(--area); }
+.investigacao__descoberta p { color: var(--text-dim); line-height: 1.6; font-size: .97rem; }
+.investigacao__descoberta a { display: inline-flex; align-self: flex-start; gap: 9px; color: var(--area); border-bottom: 1px solid currentColor; padding-bottom: 4px; font-size: .9rem; }
+.investigacao__descoberta [hidden] { display: none; }
+.investigacao.is-complete .investigacao__descoberta { background: color-mix(in srgb, var(--area) 26%, var(--panel)); }
+.investigacao__escala { margin-top: 28px; border: 1px solid var(--line); background: var(--panel); display: grid; grid-template-columns: .8fr 1.2fr; }
+.investigacao__escala-visual { min-height: 250px; display: grid; place-items: center; background-image: linear-gradient(var(--line) 1px, transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px); background-size: 30px 30px; }
+.investigacao__escala-visual > span { width: 120px; height: 120px; display: grid; place-items: center; border: 1px solid var(--area); border-radius: 50%; box-shadow: 0 0 0 20px color-mix(in srgb, var(--area) 10%, transparent),0 0 0 42px color-mix(in srgb, var(--area) 8%, transparent); font: italic 2.3rem var(--serif); color: var(--area); transition: transform .35s ease; }
+.investigacao__escala[data-nivel="1"] .investigacao__escala-visual > span { transform: scale(.8); }
+.investigacao__escala[data-nivel="2"] .investigacao__escala-visual > span { transform: scale(.62); }
+.investigacao__escala-info { padding: 30px; }
+.investigacao__escala-info h3 { font: 400 clamp(1.7rem, 2.6vw, 2.8rem) var(--serif); margin: 10px 0; }
+.investigacao__escala-info p { font-size: .96rem; line-height: 1.6; color: var(--text-dim); min-height: 65px; }
+.investigacao__escala-botoes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.investigacao__escala-botoes button { border: 1px solid var(--line); padding: 11px 14px; font-size: .83rem; }
+.investigacao__escala-botoes button[aria-pressed="true"] { background: var(--area); color: var(--bg); border-color: var(--area); }
+
+@media (max-width: 1050px) { .mapa__vivo .areas__grade { grid-template-columns: repeat(3, minmax(0,1fr)); } .mapa__vivo .area:last-child { grid-column: span 1; } .mapa__visor { grid-template-columns: auto 1fr; } .mapa__visor-acoes { grid-column: 2; } }
+@media (max-width: 720px) { .mapa__cabecalho { align-items: flex-start; flex-direction: column; } .mapa__vivo .areas__grade { grid-template-columns: repeat(2,minmax(0,1fr)); background-size: 50% 20%; padding: 9px; } .mapa__vivo .area { min-height: 142px; padding: 13px; } .mapa__visor { padding: 22px; gap: 12px; grid-template-columns: auto 1fr; } .mapa__visor-numero { font-size: 3.3rem; } .mapa__visor-acoes { grid-column: 1 / -1; } .mapa__visor-acoes span { text-align: left; } .investigacao__topo, .investigacao__miolo, .investigacao__escala { grid-template-columns: 1fr; } .investigacao__destinos { grid-template-columns: 1fr; } .investigacao__destino { min-height: 68px; } .investigacao__escala-visual { min-height: 200px; } }
+@media (max-width: 440px) { .mapa__vivo .area { min-height: 150px; } .mapa__vivo .area h3 { font-size: .87rem; } .mapa__vivo .area p { font-size: .76rem; } .mapa__vivo .area__icone { width: 28px; height: 28px; } .mapa__vivo .area[data-concluida="true"]::after { display: none; } }
+@media (prefers-reduced-motion: reduce) { .inicio::after { animation: none; } .investigacao__escala-visual > span { transition: none; } }

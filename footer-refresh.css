@@ -1,0 +1,262 @@
+/* Rodapé editorial: a paleta escura e o ouro seguem a identidade Prometheus. */
+.rodape--novo {
+  display: block;
+  overflow: hidden;
+  border: 1px solid #302b24;
+  border-radius: 4px;
+  background: #11100e;
+  color: #f4f0e8;
+}
+
+.rodape--novo .rodape__principal {
+  display: grid;
+  grid-template-columns: minmax(300px, .85fr) minmax(0, 1.55fr);
+}
+
+.rodape--novo .rodape__manifesto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 410px;
+  padding: clamp(30px, 4vw, 62px);
+  background: linear-gradient(145deg, #e3ceaa 0%, #c9ad7a 62%, #a98b5d 100%);
+  color: #211b13;
+}
+
+.rodape--novo .rodape__assinatura {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+}
+
+.rodape--novo .rodape__selo {
+  width: 54px;
+  height: 54px;
+  color: #3c3020;
+  opacity: 1;
+  flex: none;
+}
+
+.rodape--novo .rodape__assinatura strong,
+.rodape--novo .rodape__assinatura span {
+  display: block;
+}
+
+.rodape--novo .rodape__assinatura strong {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -.04em;
+}
+
+.rodape--novo .rodape__assinatura span {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .18em;
+}
+
+.rodape--novo .rodape__frase {
+  margin: auto 0 38px;
+  padding-top: 36px;
+  font-size: clamp(2.1rem, 3vw, 3.45rem);
+  font-weight: 300;
+  line-height: 1.12;
+  letter-spacing: -.055em;
+}
+
+.rodape--novo .rodape__frase em {
+  font-family: var(--serif);
+  font-weight: 400;
+}
+
+.rodape--novo .rodape__convite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: min(100%, 280px);
+  padding: 15px 0;
+  border-top: 1px solid rgba(33, 27, 19, .45);
+  color: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  transition: padding .25s ease, color .25s ease;
+}
+
+.rodape--novo .rodape__convite:hover {
+  padding-left: 7px;
+  color: #594328;
+}
+
+.rodape--novo .rodape__menus {
+  display: grid;
+  grid-template-columns: minmax(130px, .7fr) minmax(0, 1.3fr);
+  align-content: start;
+  gap: clamp(24px, 3vw, 48px);
+  padding: clamp(30px, 4vw, 62px);
+}
+
+.rodape--novo .rodape__grupo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  gap: 12px;
+}
+
+.rodape--novo .rodape__grupo h2 {
+  margin: 0 0 13px;
+  color: #d4bb90;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.rodape--novo .rodape__grupo a,
+.rodape--novo .rodape__grupo span {
+  color: #c4beb4;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.rodape--novo .rodape__grupo a {
+  transition: color .2s ease, transform .2s ease;
+}
+
+.rodape--novo .rodape__grupo a:hover {
+  color: #e5cc9c;
+  transform: translateX(3px);
+}
+
+.rodape--novo .rodape__lista-areas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 22px;
+  width: 100%;
+}
+
+.rodape--novo .rodape__grupo--contato {
+  grid-column: 1 / -1;
+  padding-top: 26px;
+  border-top: 1px solid #302b24;
+}
+
+.rodape--novo .rodape__grupo--contato h2 {
+  margin-bottom: 3px;
+}
+
+.rodape--novo .rodape__grupo .rodape__email {
+  color: #f4f0e8;
+  font-size: clamp(16px, 1.8vw, 22px);
+  overflow-wrap: anywhere;
+}
+
+.rodape--novo .rodape__base {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 30px;
+  padding: 20px clamp(30px, 4vw, 62px);
+  border-top: 1px solid #302b24;
+  color: #aaa196;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.rodape--novo .rodape__base a {
+  color: #e1c697;
+  white-space: nowrap;
+}
+
+.rodape--novo .rodape__base a:hover {
+  color: #fff2d9;
+}
+
+.rodape--novo a:focus-visible,
+#contato a:focus-visible {
+  outline: 2px solid #e5cc9c;
+  outline-offset: 4px;
+}
+
+#contato .contato__rotulo {
+  font-size: 12px;
+  letter-spacing: .13em;
+}
+
+#contato .contato__campo label {
+  font-size: 14px;
+  letter-spacing: .08em;
+}
+
+#contato .contato__valor,
+#contato .contato__entrada {
+  font-size: 15px;
+}
+
+#contato .contato__valor a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--beige);
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+
+#contato .contato__valor a:hover {
+  color: var(--beige);
+}
+
+#contato .contato__enviar {
+  min-height: 44px;
+  color: var(--text);
+  font-size: 14px;
+  letter-spacing: .09em;
+}
+
+#contato .contato__ajuda,
+#contato .contato__status {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1.55;
+  letter-spacing: 0;
+}
+
+#contato .contato__status.mostrar {
+  color: var(--area);
+}
+
+@media (max-width: 920px) {
+  .rodape--novo .rodape__principal {
+    grid-template-columns: 1fr;
+  }
+
+  .rodape--novo .rodape__manifesto {
+    min-height: 290px;
+  }
+
+  .rodape--novo .rodape__frase {
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 620px) {
+  .rodape--novo .rodape__menus {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .rodape--novo .rodape__grupo--contato {
+    grid-column: auto;
+  }
+
+  .rodape--novo .rodape__base {
+    flex-wrap: wrap;
+  }
+
+  .rodape--novo .rodape__nota {
+    display: none;
+  }
+}

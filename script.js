@@ -1636,6 +1636,8 @@ window.PROMETHEUS_THUMBS = {
     };
 
 
+    MODELOS.enzimas = MODELOS.saude;
+
     /* Escolhe qual modelo será mostrado */
 
     function buildModel(name) {
