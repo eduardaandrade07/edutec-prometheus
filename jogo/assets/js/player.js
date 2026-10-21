@@ -12,7 +12,10 @@ export class PlayerController extends EventTarget {
     this.pitch = -0.03;
     this.keys = new Set();
     this.walkTime = 0;
+    this.moveBlend = 0;
+    this.sprintBlend = 0;
     this.moved = false;
+    this.colliders = [];
     this.pointerLocked = false;
     this.intentionalUnlock = false;
     this.joystick = { x: 0, y: 0, pointerId: null };
@@ -131,11 +134,16 @@ export class PlayerController extends EventTarget {
     this.pitch = -0.03;
     this.keys.clear();
     this.walkTime = 0;
+    this.moveBlend = 0;
+    this.sprintBlend = 0;
     this.moved = false;
   }
 
   place(position = [0, 1.68, -1.35], yaw = -0.58, pitch = -0.03) {
     this.position = [...position];
+    const [x, z] = this.resolveFurniture(this.position[0], this.position[2], 0.34);
+    this.position[0] = x;
+    this.position[2] = z;
     this.yaw = yaw;
     this.pitch = pitch;
     this.keys.clear();
@@ -161,24 +169,31 @@ export class PlayerController extends EventTarget {
 
   update(deltaSeconds) {
     if (!this.canControl()) return;
+    const dt = Math.min(deltaSeconds, 0.045);
     const forwardInput = (this.keys.has("KeyW") ? 1 : 0) - (this.keys.has("KeyS") ? 1 : 0) - this.joystick.y;
     const sideInput = (this.keys.has("KeyD") ? 1 : 0) - (this.keys.has("KeyA") ? 1 : 0) + this.joystick.x;
     const inputLength = Math.hypot(forwardInput, sideInput);
-    if (inputLength < 0.05) return;
+    const sprinting = this.keys.has("ShiftLeft") || this.keys.has("ShiftRight");
+    // Transições suaves de balanço da câmera e de campo de visão.
+    const moving = inputLength >= 0.05;
+    this.moveBlend += ((moving ? 1 : 0) - this.moveBlend) * Math.min(1, dt * 7);
+    this.sprintBlend += ((moving && sprinting ? 1 : 0) - this.sprintBlend) * Math.min(1, dt * 4);
+    if (!moving) return;
 
     const forward = forwardInput / Math.max(1, inputLength);
     const side = sideInput / Math.max(1, inputLength);
-    const sprinting = this.keys.has("ShiftLeft") || this.keys.has("ShiftRight");
     const speed = sprinting ? 5.15 : 3.45;
-    const distance = speed * Math.min(deltaSeconds, 0.045);
+    const distance = speed * dt;
     const sin = Math.sin(this.yaw);
     const cos = Math.cos(this.yaw);
     const nextX = this.position[0] + (sin * forward + cos * side) * distance;
     const nextZ = this.position[2] + (-cos * forward + sin * side) * distance;
+    const before = [this.position[0], this.position[2]];
     const resolved = this.resolveCollision(nextX, nextZ);
     this.position[0] = resolved[0];
     this.position[2] = resolved[1];
-    this.walkTime += distance;
+    // O passo avança conforme o deslocamento real (parado contra um móvel, não balança).
+    this.walkTime += Math.hypot(resolved[0] - before[0], resolved[1] - before[1]);
 
     if (!this.moved) {
       this.moved = true;
@@ -197,16 +212,57 @@ export class PlayerController extends EventTarget {
       const wasLabSide = this.position[2] <= dividerMin;
       z = wasLabSide ? dividerMin : dividerMax;
     }
+    return this.resolveFurniture(x, z, radius);
+  }
+
+  // Móveis e equipamentos: empurra o jogador para fora de cada obstáculo,
+  // permitindo deslizar ao longo das bordas.
+  resolveFurniture(x, z, radius) {
+    for (let pass = 0; pass < 2; pass += 1) {
+      for (const c of this.colliders) {
+        if (c.circle) {
+          const dx = x - c.x, dz = z - c.z;
+          const min = c.r + radius;
+          const d = Math.hypot(dx, dz);
+          if (d < min) {
+            const k = d > 1e-4 ? min / d : 0;
+            x = d > 1e-4 ? c.x + dx * k : c.x + min;
+            z = d > 1e-4 ? c.z + dz * k : z;
+          }
+          continue;
+        }
+        const nx = clamp(x, c.minX, c.maxX), nz = clamp(z, c.minZ, c.maxZ);
+        const dx = x - nx, dz = z - nz;
+        const d = Math.hypot(dx, dz);
+        if (d >= radius) continue;
+        if (d > 1e-4) {
+          x = nx + (dx / d) * radius;
+          z = nz + (dz / d) * radius;
+        } else {
+          // Centro dentro do obstáculo: sai pela borda mais próxima.
+          const exits = [[c.minX - radius - x, 0], [c.maxX + radius - x, 0], [0, c.minZ - radius - z], [0, c.maxZ + radius - z]];
+          exits.sort((a, b) => Math.abs(a[0] + a[1]) - Math.abs(b[0] + b[1]));
+          x += exits[0][0];
+          z += exits[0][1];
+        }
+      }
+    }
     return [x, z];
   }
 
   getCamera(reducedEffects = false) {
-    const moving = this.keys.has("KeyW") || this.keys.has("KeyA") || this.keys.has("KeyS") || this.keys.has("KeyD") || Math.hypot(this.joystick.x, this.joystick.y) > 0.05;
-    const bob = moving && !reducedEffects ? Math.sin(this.walkTime * 3.2) * 0.025 : 0;
+    const blend = reducedEffects ? 0 : this.moveBlend;
+    const stride = this.walkTime * 3.4;
+    const bob = Math.sin(stride) * 0.026 * blend;
+    const sway = Math.sin(stride * 0.5) * 0.016 * blend;
+    const roll = Math.sin(stride * 0.5) * 0.0045 * blend;
+    const right = [Math.cos(this.yaw), Math.sin(this.yaw)];
     return {
-      position: [this.position[0], 1.68 + bob, this.position[2]],
+      position: [this.position[0] + right[0] * sway, 1.68 + bob, this.position[2] + right[1] * sway],
       yaw: this.yaw,
       pitch: this.pitch,
+      roll,
+      fovKick: reducedEffects ? 0 : this.sprintBlend * 4,
     };
   }
 }

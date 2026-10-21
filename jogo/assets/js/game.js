@@ -4,9 +4,10 @@ import { MissionManager } from "./missions.js?v=3.0.1";
 import { PlayerController, isTouchDevice } from "./player.js?v=3.0.1";
 import { gameState } from "./state.js?v=3.0.1";
 import { GameUI } from "./ui.js?v=3.0.1";
-import { WorldRenderer } from "./world.js?v=3.0.1";
+import { WorldRenderer, supportsModernRenderer } from "./world.js?v=4.0.0";
+import { LegacyWorldRenderer } from "./world-legacy.js?v=4.0.0";
 
-const canvas = document.querySelector("#game-canvas");
+let canvas = document.querySelector("#game-canvas");
 
 const pauseDialog = document.querySelector("#pause-dialog");
 
@@ -243,16 +244,33 @@ function frame(now) {
     requestAnimationFrame(frame);
 }
 
+// Renderizador moderno (WebGL2 + three.js) com retorno automático para o
+// renderizador original quando o navegador não oferece WebGL2.
+function createWorld() {
+    if (supportsModernRenderer()) {
+        try {
+            return new WorldRenderer(canvas, gameState.settings);
+        } catch (error) {
+            console.warn("Renderizador avançado indisponível; usando o modo compatível.", error);
+            // Um canvas só aceita um tipo de contexto: troca por um novo antes do WebGL1.
+            const fresh = canvas.cloneNode(false);
+            canvas.replaceWith(fresh);
+            canvas = fresh;
+        }
+    }
+    return new LegacyWorldRenderer(canvas, gameState.settings);
+}
+
 try {
-    world = new WorldRenderer(
-        canvas,
-        gameState.settings
-    );
+    world = createWorld();
 
     player = new PlayerController(
         canvas,
         gameState
     );
+
+    // Obstáculos do cenário (o renderizador antigo não os define).
+    player.colliders = world.colliders || [];
 
     interaction = new InteractionSystem(
         world,
@@ -272,6 +290,11 @@ try {
     world.syncCampaign(gameState);
 
     bindGameEvents();
+
+    // Gancho de depuração (apenas com ?debug na URL) para testes automatizados.
+    if (new URLSearchParams(window.location.search).has("debug")) {
+        window.__surto = { world, player, gameState, mission, interaction };
+    }
 
     ui.ready();
 
