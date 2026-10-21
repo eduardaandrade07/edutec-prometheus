@@ -127,12 +127,12 @@ function floorSet(size) {
     let c = mixRGB(alt, base, mottling[i]);
     const tint = 1 + tileTint(x, y);
     c = c.map((ch) => ch * tint);
-    c = mixRGB(c, hex("#3a4549"), scuffs[i] * 0.35);
+    c = mixRGB(c, hex("#333e42"), scuffs[i] * 0.18);
     return mixRGB(seamCol, c, clamp01(height[i] * 1.2));
   });
   const rough = fieldToCanvas(size, (x, y) => {
     const i = y * size + x;
-    const r = 0.34 + mottling[i] * 0.16 + scuffs[i] * 0.22 + (1 - height[i]) * 0.3;
+    const r = 0.36 + mottling[i] * 0.14 + scuffs[i] * 0.07 + (1 - height[i]) * 0.3;
     const g = clamp01(r) * 255;
     return [g, g, g];
   });
@@ -161,7 +161,7 @@ function wallSet(size) {
   const color = fieldToCanvas(size, (x, y) => {
     const i = y * size + x;
     const t = 1 + panelTone(x, y) + (grime[i] - 0.5) * 0.12;
-    const c = hex("#56676c").map((value) => value * t);
+    const c = hex("#66787d").map((value) => value * t);
     return mixRGB(hex("#141b1d"), c, clamp01(0.25 + height[i]));
   });
   const rough = fieldToCanvas(size, (x, y) => {

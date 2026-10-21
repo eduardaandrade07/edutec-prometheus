@@ -203,11 +203,11 @@ export function buildLab({ b, m, scene, quality }) {
     b.box(m.aluminium, 0.07, 0.006, wl - 0.04, ROOM.maxX - 0.12, win.y1 - 0.05 - i * 0.05, wz, { r: 0, rz: 0.55 });
   }
   b.box(m.casingGrey, 0.1, 0.08, wl + 0.06, ROOM.maxX - 0.12, win.y1 - 0.01, wz, { r: 0.01 });
-  const far = new THREE.Mesh(new THREE.PlaneGeometry(90, 22.5), new THREE.MeshBasicMaterial({ map: skylineTexture(0), fog: false }));
+  const far = new THREE.Mesh(new THREE.PlaneGeometry(90, 22.5), new THREE.MeshBasicMaterial({ map: skylineTexture(0), fog: false, toneMapped: false }));
   far.position.set(42, 1.2, wz);
   far.rotation.y = -Math.PI / 2;
   scene.add(far);
-  const near = new THREE.Mesh(new THREE.PlaneGeometry(46, 11.5), new THREE.MeshBasicMaterial({ map: skylineTexture(1), transparent: true, fog: false }));
+  const near = new THREE.Mesh(new THREE.PlaneGeometry(46, 11.5), new THREE.MeshBasicMaterial({ map: skylineTexture(1), transparent: true, fog: false, toneMapped: false }));
   near.position.set(24, -1.4, wz + 3);
   near.rotation.y = -Math.PI / 2;
   scene.add(near);
@@ -660,7 +660,9 @@ export function buildLab({ b, m, scene, quality }) {
         b.box(i % 2 ? m.plasticBlue : m.casing, 0.11, 0.07, 0.14, x - 0.42 + i * 0.14, y + 0.04, z + 0.05, { r: 0.006 });
       }
     });
-    b.box(m.aluminium, 1.22, 1.72, 0.04, x, 1.02, z - 0.37, { r: 0.012 });
+    // Moldura da porta de vidro (quatro perfis, sem cobrir o vidro).
+    [[0, 1.86, 1.22, 0.06], [0, 0.18, 1.22, 0.06]].forEach(([dx, y, w, h]) => b.box(m.aluminium, w, h, 0.05, x + dx, y, z - 0.37, { r: 0.01 }));
+    [-0.59, 0.59].forEach((dx) => b.box(m.aluminium, 0.05, 1.72, 0.05, x + dx, 1.02, z - 0.37, { r: 0.01 }));
     b.box(m.glass, 1.12, 1.6, 0.02, x, 1.02, z - 0.395, { r: 0, cast: false, receive: false });
     b.box(m.steel, 0.03, 0.6, 0.04, x + 0.52, 1.1, z - 0.43, { r: 0.012 });
     b.box(m.panelBlack, 0.5, 0.14, 0.02, x, 1.95, z - 0.385, { r: 0.008 });

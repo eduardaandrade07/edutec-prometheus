@@ -115,7 +115,7 @@ export class WorldRenderer extends EventTarget {
     const pmrem = new THREE.PMREMGenerator(renderer);
     const roomEnv = new RoomEnvironment();
     scene.environment = pmrem.fromScene(roomEnv, 0.04).texture;
-    scene.environmentIntensity = 0.32;
+    scene.environmentIntensity = 0.42;
     roomEnv.dispose?.();
     pmrem.dispose();
 
@@ -178,7 +178,7 @@ export class WorldRenderer extends EventTarget {
   // ---------------------------------------------------------------------
   createLights() {
     const scene = this.scene;
-    this.hemi = new THREE.HemisphereLight(0xa9c8cc, 0x1a1512, 0.5);
+    this.hemi = new THREE.HemisphereLight(0xa9c8cc, 0x1a1512, 0.85);
     scene.add(this.hemi);
 
     // Luminárias principais (as quatro primeiras podem projetar sombras).

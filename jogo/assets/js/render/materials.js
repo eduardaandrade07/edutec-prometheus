@@ -21,10 +21,10 @@ export function createMaterials(tex) {
   m.trim = std({ color: 0x0f1416, roughness: 0.55, metalness: 0.6 });
 
   // Equipamentos: pintura eletrostática clara, cinza e grafite.
-  m.casing = std({ color: 0xd6dcde, ...tex.paint, roughness: 1, metalness: 0, envMapIntensity: 0.8, normalScale: new THREE.Vector2(0.35, 0.35) }, 1.2);
-  m.casingWarm = std({ color: 0xc9c5bc, ...tex.paint, roughness: 1, metalness: 0, normalScale: new THREE.Vector2(0.35, 0.35) }, 1.2);
-  m.casingGrey = std({ color: 0x7d888d, ...tex.paint, roughness: 1, metalness: 0.1 }, 1.2);
-  m.casingDark = std({ color: 0x2a3236, ...tex.paint, roughness: 0.85, metalness: 0.2 }, 1.2);
+  m.casing = std({ color: 0xd6dcde, ...tex.paint, roughness: 1, metalness: 0, envMapIntensity: 0.8, normalScale: new THREE.Vector2(0.15, 0.15) }, 1.2);
+  m.casingWarm = std({ color: 0xc9c5bc, ...tex.paint, roughness: 1, metalness: 0, normalScale: new THREE.Vector2(0.15, 0.15) }, 1.2);
+  m.casingGrey = std({ color: 0x7d888d, ...tex.paint, roughness: 1, metalness: 0.1, normalScale: new THREE.Vector2(0.15, 0.15) }, 1.2);
+  m.casingDark = std({ color: 0x2a3236, ...tex.paint, roughness: 0.85, metalness: 0.2, normalScale: new THREE.Vector2(0.15, 0.15) }, 1.2);
   m.panelBlack = std({ color: 0x0b0e10, roughness: 0.28, metalness: 0.1, envMapIntensity: 1.2 });
 
   // Metais.
@@ -49,15 +49,15 @@ export function createMaterials(tex) {
 
   // Vidros (transparência com reflexos do ambiente).
   m.glass = new THREE.MeshPhysicalMaterial({
-    color: 0xc8e6ea, roughness: 0.04, metalness: 0, transparent: true, opacity: 0.14,
-    envMapIntensity: 1.6, depthWrite: false, side: THREE.DoubleSide, ior: 1.5, specularIntensity: 1,
+    color: 0xc8e6ea, roughness: 0.04, metalness: 0, transparent: true, opacity: 0.1,
+    envMapIntensity: 0.55, depthWrite: false, side: THREE.DoubleSide, ior: 1.5, specularIntensity: 1,
   });
   m.glassFrosted = new THREE.MeshPhysicalMaterial({
-    color: 0xd9ecef, roughness: 0.55, metalness: 0, transparent: true, opacity: 0.5,
-    envMapIntensity: 0.8, depthWrite: false, side: THREE.DoubleSide,
+    color: 0xd9ecef, roughness: 0.55, metalness: 0, transparent: true, opacity: 0.38,
+    envMapIntensity: 0.4, depthWrite: false, side: THREE.DoubleSide,
   });
   m.glassTinted = new THREE.MeshPhysicalMaterial({
-    color: 0x7fb7c4, roughness: 0.08, transparent: true, opacity: 0.28, envMapIntensity: 1.4, depthWrite: false,
+    color: 0x7fb7c4, roughness: 0.08, transparent: true, opacity: 0.22, envMapIntensity: 0.6, depthWrite: false,
   });
   m.bottleAmber = new THREE.MeshPhysicalMaterial({ color: 0x9a5a1c, roughness: 0.12, transparent: true, opacity: 0.78, envMapIntensity: 1.2 });
   m.bottleClear = new THREE.MeshPhysicalMaterial({ color: 0xdfeff2, roughness: 0.06, transparent: true, opacity: 0.32, envMapIntensity: 1.4, depthWrite: false });
