@@ -13,10 +13,21 @@ import { GTAOPass } from "../vendor/three/addons/postprocessing/GTAOPass.js";
 import { RoomEnvironment } from "../vendor/three/addons/environments/RoomEnvironment.js";
 import { contactShadowTexture, createTextureLibrary, radialTexture } from "./render/textures.js";
 import { createMaterials } from "./render/materials.js";
-import { SceneBuilder } from "./render/builder.js";
+import { SceneBuilder, sanitizeNormals } from "./render/builder.js";
 import { buildLab, ROOM } from "./render/lab.js";
 import { createHelena } from "./render/helena.js";
 import { createDust, createLightShaft, createObjectiveMarker } from "./render/effects.js";
+
+// Proteção global contra estouro de cor: brilhos especulares em superfícies
+// muito polidas podem passar do limite do buffer de 16 bits (virando infinito)
+// e o bloom transforma esses pixels em blocos pretos ao mover a câmera.
+// Aqui todo material embutido limita a cor final e descarta valores inválidos.
+if (!THREE.ShaderChunk.opaque_fragment.includes("prometheusSafe")) {
+  THREE.ShaderChunk.opaque_fragment = THREE.ShaderChunk.opaque_fragment.replace(
+    "gl_FragColor = vec4( outgoingLight, diffuseColor.a );",
+    "// prometheusSafe\nif ( any( isnan( outgoingLight ) ) || any( isinf( outgoingLight ) ) ) outgoingLight = vec3( 0.0 );\ngl_FragColor = vec4( clamp( outgoingLight, 0.0, 48.0 ), clamp( diffuseColor.a, 0.0, 1.0 ) );",
+  );
+}
 
 export function supportsModernRenderer() {
   try {
@@ -45,6 +56,29 @@ const QUALITY = {
   low: { ratio: 0.8, shadows: 0, shadowSize: 0, post: false, ao: false, dust: 0, shafts: false, moon: false },
   medium: { ratio: 1.25, shadows: 2, shadowSize: 1024, post: true, ao: false, dust: 260, shafts: true, moon: true },
   high: { ratio: 1.75, shadows: 4, shadowSize: 2048, post: true, ao: true, dust: 520, shafts: true, moon: true },
+};
+
+// Filtro de segurança: descarta valores inválidos (NaN/infinito) e limita
+// picos extremos antes do bloom, que de outro modo se espalhariam como
+// blocos pretos ou clarões pela tela.
+const SanitizeShader = {
+  uniforms: { tDiffuse: { value: null }, uMax: { value: 32.0 } },
+  vertexShader: /* glsl */ `
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+  `,
+  fragmentShader: /* glsl */ `
+    uniform sampler2D tDiffuse;
+    uniform float uMax;
+    varying vec2 vUv;
+    void main() {
+      vec4 c = texture2D(tDiffuse, vUv);
+      // NaN vira 0 por canal; infinito é limitado ao teto (continua claro, não preto).
+      vec3 rgb = vec3(isnan(c.r) ? 0.0 : c.r, isnan(c.g) ? 0.0 : c.g, isnan(c.b) ? 0.0 : c.b);
+      rgb = min(max(rgb, vec3(0.0)), vec3(uMax));
+      gl_FragColor = vec4(rgb, isnan(c.a) ? 1.0 : clamp(c.a, 0.0, 1.0));
+    }
+  `,
 };
 
 // Correção de cor final: tonalização sutil (sombras frias, luzes quentes),
@@ -137,6 +171,14 @@ export class WorldRenderer extends EventTarget {
 
     builder.finalize();
     this.colliders = builder.colliders;
+    // Garante normais válidas em toda a cena (inclui hologramas e peças dinâmicas).
+    const fixedGeometries = new Set();
+    scene.traverse((object) => {
+      if (object.geometry && !fixedGeometries.has(object.geometry)) {
+        fixedGeometries.add(object.geometry);
+        sanitizeNormals(object.geometry);
+      }
+    });
 
     // Brilhos de cada alvo recebem material próprio para pulsar isoladamente.
     this.targetGlows = [];
@@ -291,6 +333,7 @@ export class WorldRenderer extends EventTarget {
       composer.addPass(ao);
       this.aoPass = ao;
     }
+    composer.addPass(new ShaderPass(SanitizeShader));
     this.bloom = new UnrealBloomPass(new THREE.Vector2(size.x * ratio * 0.5, size.y * ratio * 0.5), 0.55, 0.6, 0.92);
     composer.addPass(this.bloom);
     this.grade = new ShaderPass(GradeShader);

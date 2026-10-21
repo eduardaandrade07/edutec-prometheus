@@ -37,17 +37,18 @@ export function createHologramMaterial(color = "#6ff2cf", { opacity = 1, scan = 
       uniform float uScan;
       varying vec3 vNormalW;
       varying vec3 vWorld;
+      vec3 safeNormalize(vec3 v) { float l = length(v); return l > 1e-5 ? v / l : vec3(0.0, 1.0, 0.0); }
       void main() {
-        vec3 n = normalize(vNormalW);
-        vec3 v = normalize(cameraPosition - vWorld);
-        float facing = abs(dot(n, v));
+        vec3 n = safeNormalize(vNormalW);
+        vec3 v = safeNormalize(cameraPosition - vWorld);
+        float facing = clamp(abs(dot(n, v)), 0.0, 1.0);
         float fresnel = pow(1.0 - facing, 2.0);
         float lines = 0.72 + 0.28 * sin(vWorld.y * 260.0 - uTime * 3.0);
         float sweep = smoothstep(0.0, 0.03, fract(vWorld.y * 0.42 - uTime * 0.18)) * (1.0 - smoothstep(0.03, 0.09, fract(vWorld.y * 0.42 - uTime * 0.18)));
         float light = 0.35 + 0.65 * clamp(dot(n, normalize(vec3(-0.3, 0.8, 0.5))) * 0.5 + 0.5, 0.0, 1.0);
         float alpha = (0.3 + fresnel * 0.85) * mix(1.0, lines, uScan) * uFlicker * uOpacity;
         vec3 col = uColor * (light * 1.05 + fresnel * 1.9) + uColor * sweep * 1.4 * uScan;
-        gl_FragColor = vec4(col, clamp(alpha + sweep * 0.25 * uScan, 0.0, 1.0));
+        gl_FragColor = vec4(clamp(col, 0.0, 8.0), clamp(alpha + sweep * 0.25 * uScan, 0.0, 1.0));
       }
     `,
     transparent: true,
@@ -98,13 +99,14 @@ export function createBeamMaterial(color = "#6ff2cf", strength = 0.35) {
       varying vec2 vUv;
       varying vec3 vNormalW;
       varying vec3 vWorld;
+      vec3 safeNormalize(vec3 v) { float l = length(v); return l > 1e-5 ? v / l : vec3(0.0, 1.0, 0.0); }
       void main() {
-        vec3 v = normalize(cameraPosition - vWorld);
-        float edge = pow(abs(dot(normalize(vNormalW), v)), 1.4);
-        float fade = pow(1.0 - vUv.y, 1.6) * smoothstep(0.0, 0.08, vUv.y);
+        vec3 v = safeNormalize(cameraPosition - vWorld);
+        float edge = pow(clamp(abs(dot(safeNormalize(vNormalW), v)), 0.0, 1.0), 1.4);
+        float fade = pow(clamp(1.0 - vUv.y, 0.0, 1.0), 1.6) * smoothstep(0.0, 0.08, vUv.y);
         float shimmer = 0.85 + 0.15 * sin(vUv.x * 40.0 + uTime * 1.5) * sin(vUv.y * 18.0 - uTime * 2.0);
         float a = fade * edge * shimmer * uStrength;
-        gl_FragColor = vec4(uColor * a, a);
+        gl_FragColor = vec4(uColor * clamp(a, 0.0, 1.0), clamp(a, 0.0, 1.0));
       }
     `,
     transparent: true,

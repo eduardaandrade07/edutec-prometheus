@@ -83,7 +83,7 @@ export function createHelena({ position, sprite }) {
   root.add(projector);
   const steel = new THREE.MeshStandardMaterial({ color: 0x8e999d, roughness: 0.32, metalness: 1 });
   const darkMetal = new THREE.MeshStandardMaterial({ color: 0x1d2427, roughness: 0.5, metalness: 0.7 });
-  const lens = new THREE.MeshStandardMaterial({ color: 0x050708, roughness: 0.08, metalness: 0.2, envMapIntensity: 1.5 });
+  const lens = new THREE.MeshStandardMaterial({ color: 0x050708, roughness: 0.16, metalness: 0.2, envMapIntensity: 1.5 });
   const ringGlow = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: new THREE.Color(color), emissiveIntensity: 3 });
   const baseProfile = [P(0, 0), P(0.6, 0), P(0.62, 0.02), P(0.62, 0.1), P(0.58, 0.14), P(0.54, 0.16), P(0.5, 0.2), P(0, 0.2)];
   const base = new THREE.Mesh(latheGeometry(baseProfile, 48), darkMetal);

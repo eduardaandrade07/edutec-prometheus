@@ -35,7 +35,7 @@ export class ScreenDisplay {
     this.texture.colorSpace = THREE.SRGBColorSpace;
     this.texture.anisotropy = 4;
     this.material = new THREE.MeshStandardMaterial({
-      color: 0x020304, roughness: 0.16, metalness: 0, envMapIntensity: 0.7,
+      color: 0x020304, roughness: 0.22, metalness: 0, envMapIntensity: 0.7,
       emissive: 0xffffff, emissiveMap: this.texture, emissiveIntensity: intensity,
     });
     this.baseIntensity = intensity;

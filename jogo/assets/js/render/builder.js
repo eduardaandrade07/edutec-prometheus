@@ -11,6 +11,26 @@ const tmpEuler = new THREE.Euler();
 const tmpPos = new THREE.Vector3();
 const tmpScale = new THREE.Vector3();
 
+// Normais de comprimento zero (polos de perfis de revolução, faces degeneradas)
+// viram NaN nos shaders; substitui por um vetor válido.
+export function sanitizeNormals(geometry) {
+  const n = geometry?.attributes?.normal;
+  if (!n) return 0;
+  let fixed = 0;
+  for (let i = 0; i < n.count; i += 1) {
+    const x = n.getX(i), y = n.getY(i), z = n.getZ(i);
+    const len = Math.hypot(x, y, z);
+    if (!(len > 1e-6) || !Number.isFinite(len)) {
+      n.setXYZ(i, 0, 1, 0);
+      fixed += 1;
+    } else if (Math.abs(len - 1) > 1e-3) {
+      n.setXYZ(i, x / len, y / len, z / len);
+    }
+  }
+  if (fixed) n.needsUpdate = true;
+  return fixed;
+}
+
 export function matrixFrom(x, y, z, { rx = 0, ry = 0, rz = 0, sx = 1, sy = 1, sz = 1 } = {}) {
   tmpEuler.set(rx, ry, rz, "YXZ");
   tmpQuat.setFromEuler(tmpEuler);
@@ -70,6 +90,7 @@ export class SceneBuilder {
     if (!this.batches.has(key)) this.batches.set(key, { material, cast, receive, parts: [] });
     const g = normalizeGeometry(geometry);
     g.applyMatrix4(matrix);
+    sanitizeNormals(g);
     this.batches.get(key).parts.push(g);
     return g;
   }

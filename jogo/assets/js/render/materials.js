@@ -30,7 +30,7 @@ export function createMaterials(tex) {
   // Metais.
   m.steel = std({ color: 0xd8dde0, ...tex.brushed, roughness: 1, metalness: 1, envMapIntensity: 1.0 }, 0.9);
   m.steelDark = std({ color: 0x5b6569, ...tex.brushed, roughness: 1, metalness: 0.9 }, 0.9);
-  m.chrome = std({ color: 0xe8eef0, roughness: 0.12, metalness: 1, envMapIntensity: 1.3 });
+  m.chrome = std({ color: 0xe8eef0, roughness: 0.18, metalness: 1, envMapIntensity: 1.3 });
   m.aluminium = std({ color: 0x9aa4a8, ...tex.brushed, roughness: 0.9, metalness: 0.85 }, 0.6);
 
   // Superfícies de trabalho, borracha e tecido.
@@ -49,7 +49,7 @@ export function createMaterials(tex) {
 
   // Vidros (transparência com reflexos do ambiente).
   m.glass = new THREE.MeshPhysicalMaterial({
-    color: 0xc8e6ea, roughness: 0.04, metalness: 0, transparent: true, opacity: 0.1,
+    color: 0xc8e6ea, roughness: 0.1, metalness: 0, transparent: true, opacity: 0.1,
     envMapIntensity: 0.55, depthWrite: false, side: THREE.DoubleSide, ior: 1.5, specularIntensity: 1,
   });
   m.glassFrosted = new THREE.MeshPhysicalMaterial({
@@ -57,10 +57,10 @@ export function createMaterials(tex) {
     envMapIntensity: 0.4, depthWrite: false, side: THREE.DoubleSide,
   });
   m.glassTinted = new THREE.MeshPhysicalMaterial({
-    color: 0x7fb7c4, roughness: 0.08, transparent: true, opacity: 0.22, envMapIntensity: 0.6, depthWrite: false,
+    color: 0x7fb7c4, roughness: 0.12, transparent: true, opacity: 0.22, envMapIntensity: 0.6, depthWrite: false,
   });
-  m.bottleAmber = new THREE.MeshPhysicalMaterial({ color: 0x9a5a1c, roughness: 0.12, transparent: true, opacity: 0.78, envMapIntensity: 1.2 });
-  m.bottleClear = new THREE.MeshPhysicalMaterial({ color: 0xdfeff2, roughness: 0.06, transparent: true, opacity: 0.32, envMapIntensity: 1.4, depthWrite: false });
+  m.bottleAmber = new THREE.MeshPhysicalMaterial({ color: 0x9a5a1c, roughness: 0.15, transparent: true, opacity: 0.78, envMapIntensity: 1.2 });
+  m.bottleClear = new THREE.MeshPhysicalMaterial({ color: 0xdfeff2, roughness: 0.12, transparent: true, opacity: 0.32, envMapIntensity: 1.4, depthWrite: false });
   m.liquidBlue = std({ color: 0x2a7fb0, roughness: 0.2, emissive: 0x0b3a5a, emissiveIntensity: 0.6, transparent: true, opacity: 0.85 });
   m.liquidGreen = std({ color: 0x2fae86, roughness: 0.2, emissive: 0x0f5a42, emissiveIntensity: 0.7, transparent: true, opacity: 0.85 });
   m.liquidAmber = std({ color: 0xd08a2a, roughness: 0.2, emissive: 0x5a3008, emissiveIntensity: 0.5, transparent: true, opacity: 0.85 });
