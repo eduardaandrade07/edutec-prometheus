@@ -40,25 +40,25 @@ function headGeometry() {
 }
 
 function hairGeometry() {
-  // Calota que cobre topo, laterais e nuca; abre na região do rosto.
-  const g = new THREE.SphereGeometry(0.112, 40, 26, 0, Math.PI * 2, 0, Math.PI * 0.62);
-  const pos = g.attributes.position;
-  const v = new THREE.Vector3();
-  for (let i = 0; i < pos.count; i += 1) {
-    v.fromBufferAttribute(pos, i);
-    let sx = 0.9, sy = 1.12, sz = 1.04;
-    // Recorte do rosto: puxa para trás os vértices frontais baixos (linha do cabelo).
-    if (v.z > 0.04 && v.y < 0.05) {
-      const k = (v.z - 0.04) / 0.07;
-      v.z -= k * 0.04;
-      v.y += k * 0.02;
+  // Calota no topo da cabeça + volume que desce apenas pela nuca e laterais,
+  // deixando o rosto livre. Em SphereGeometry, phi = π/2 aponta para +z (rosto).
+  const shape = (g, back) => {
+    const pos = g.attributes.position;
+    const v = new THREE.Vector3();
+    for (let i = 0; i < pos.count; i += 1) {
+      v.fromBufferAttribute(pos, i);
+      let sx = 0.9, sy = 1.12, sz = 1.04;
+      if (back && v.z < 0) { sz *= 1.08; sx *= 1.03; }
+      pos.setXYZ(i, v.x * sx, v.y * sy, v.z * sz);
     }
-    // Volume maior na nuca.
-    if (v.z < 0) { sz *= 1.08; sx *= 1.03; }
-    pos.setXYZ(i, v.x * sx, v.y * sy, v.z * sz);
-  }
-  g.computeVertexNormals();
-  return g;
+    g.computeVertexNormals();
+    return g;
+  };
+  const cap = shape(new THREE.SphereGeometry(0.113, 40, 14, 0, Math.PI * 2, 0, Math.PI * 0.36), false);
+  // Setor traseiro: exclui ±62° em torno da frente.
+  const front = Math.PI / 2, open = THREE.MathUtils.degToRad(62);
+  const back = shape(new THREE.SphereGeometry(0.115, 32, 22, front + open, Math.PI * 2 - open * 2, Math.PI * 0.2, Math.PI * 0.45), true);
+  return [cap, back];
 }
 
 function capsule(radius, length, sx = 1, sz = 1) {
@@ -191,7 +191,7 @@ export function createHelena({ position, sprite }) {
   head.position.set(0, 0.17, 0.008);
   neck.add(head);
   mesh(headGeometry(), skin, head);
-  mesh(hairGeometry(), dark, head, 0, 0.012, -0.006);
+  hairGeometry().forEach((g) => mesh(g, dark, head, 0, 0.012, -0.006));
   // Coque baixo e mechas laterais.
   mesh(new THREE.SphereGeometry(0.055, 20, 14), dark, head, 0, -0.01, -0.11).scale.set(1.1, 0.9, 0.8);
   [-1, 1].forEach((side) => {
@@ -200,7 +200,7 @@ export function createHelena({ position, sprite }) {
   });
   // Traços faciais muito discretos (olhos luminosos e nariz).
   const eyes = [-1, 1].map((side) => {
-    const eye = mesh(new THREE.SphereGeometry(0.011, 12, 8), bright, head, side * 0.034, 0.012, 0.085);
+    const eye = mesh(new THREE.SphereGeometry(0.012, 12, 8), bright, head, side * 0.034, 0.012, 0.088);
     eye.scale.set(1.3, 0.7, 0.5);
     return eye;
   });
