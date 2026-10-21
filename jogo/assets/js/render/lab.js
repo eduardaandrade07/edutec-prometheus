@@ -649,9 +649,13 @@ export function buildLab({ b, m, scene, quality }) {
   let sampleVial, lockerLed;
   {
     const x = -5.9, z = 10.2;
-    b.box(m.casing, 1.3, 2.1, 0.76, x, 1.05, z, { r: 0.04 });
-    b.box(m.casingGrey, 1.3, 0.12, 0.78, x, 0.06, z, { r: 0.01 });
-    b.box(m.panelBlack, 1.14, 1.6, 0.6, x, 1.0, z + 0.02, { r: 0 });
+    // Gabinete oco (laterais, fundo, teto e base) para que o interior apareça pelo vidro.
+    [-0.62, 0.62].forEach((dx) => b.box(m.casing, 0.06, 2.1, 0.76, x + dx, 1.05, z, { r: 0.02 }));
+    b.box(m.casing, 1.3, 0.3, 0.76, x, 1.95, z, { r: 0.03 });
+    b.box(m.casing, 1.3, 0.2, 0.76, x, 0.1, z, { r: 0.02 });
+    b.box(m.casingGrey, 1.3, 0.06, 0.78, x, 0.03, z, { r: 0.01 });
+    b.box(m.casingDark, 1.2, 1.7, 0.04, x, 1.05, z + 0.35, { r: 0 });
+    b.box(m.steelDark, 1.18, 1.6, 0.6, x, 1.0, z + 0.36, { r: 0, sz: 0.01 });
     b.box(m.lightPanel, 1.0, 0.015, 0.05, x, 1.78, z - 0.2, { r: 0, cast: false });
     [0.45, 0.85, 1.25, 1.62].forEach((y) => {
       b.box(m.steel, 1.08, 0.012, 0.5, x, y, z, { r: 0, cast: false });
