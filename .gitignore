@@ -1,0 +1,9 @@
+# Segredos locais (nunca enviar)
+.env
+.env.local
+.env.*.local
+
+# Dependências e arquivos do sistema
+node_modules/
+.DS_Store
+.vercel
