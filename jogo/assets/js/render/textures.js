@@ -189,7 +189,7 @@ function brushedSet(size) {
 
 // Pintura eletrostática/plástico de equipamento: textura fina e manchas suaves.
 function paintSet(size) {
-  const orange = makeField(size, (u, v) => fbm(u, v, 91, 96, 2));
+  const orange = makeField(size, (u, v) => fbm(u, v, 91, 160, 2));
   const smudge = makeField(size, (u, v) => fbm(u, v, 97, 3, 4));
   const rough = fieldToCanvas(size, (x, y) => {
     const i = y * size + x;
@@ -198,11 +198,11 @@ function paintSet(size) {
   });
   const color = fieldToCanvas(size, (x, y) => {
     const i = y * size + x;
-    const g = 236 + (smudge[i] - 0.5) * 26 + (orange[i] - 0.5) * 6;
+    const g = 238 + (smudge[i] - 0.5) * 12 + (orange[i] - 0.5) * 3;
     return [g, g, g];
   });
   const height = makeField(size, (u, v, x, y) => orange[y * size + x] * 0.35);
-  return { map: color, roughnessMap: rough, normalMap: normalFromHeight(size, height, 0.7) };
+  return { map: color, roughnessMap: rough, normalMap: normalFromHeight(size, height, 0.25) };
 }
 
 // Tecido técnico (bancos e cadeiras).

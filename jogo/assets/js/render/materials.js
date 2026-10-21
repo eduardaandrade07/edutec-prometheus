@@ -21,8 +21,8 @@ export function createMaterials(tex) {
   m.trim = std({ color: 0x0f1416, roughness: 0.55, metalness: 0.6 });
 
   // Equipamentos: pintura eletrostática clara, cinza e grafite.
-  m.casing = std({ color: 0xd6dcde, ...tex.paint, roughness: 1, metalness: 0, envMapIntensity: 0.8 }, 1.2);
-  m.casingWarm = std({ color: 0xc9c5bc, ...tex.paint, roughness: 1, metalness: 0 }, 1.2);
+  m.casing = std({ color: 0xd6dcde, ...tex.paint, roughness: 1, metalness: 0, envMapIntensity: 0.8, normalScale: new THREE.Vector2(0.35, 0.35) }, 1.2);
+  m.casingWarm = std({ color: 0xc9c5bc, ...tex.paint, roughness: 1, metalness: 0, normalScale: new THREE.Vector2(0.35, 0.35) }, 1.2);
   m.casingGrey = std({ color: 0x7d888d, ...tex.paint, roughness: 1, metalness: 0.1 }, 1.2);
   m.casingDark = std({ color: 0x2a3236, ...tex.paint, roughness: 0.85, metalness: 0.2 }, 1.2);
   m.panelBlack = std({ color: 0x0b0e10, roughness: 0.28, metalness: 0.1, envMapIntensity: 1.2 });
