@@ -277,9 +277,12 @@ function enquadrar(modelo, imediato = false) {
   const alvo = new THREE.Vector3(...(c.alvo || [0, 0.9, 0]));
   const ang = c.angulo ?? 0.55;
   const elev = c.elevacao ?? 0.32;
-  const para = new THREE.Vector3(Math.sin(ang) * Math.cos(elev), Math.sin(elev), Math.cos(ang) * Math.cos(elev)).multiplyScalar(c.distancia).add(alvo);
+  // Telas em retrato (celulares) precisam de mais distância para caber o modelo inteiro.
+  const ajusteTela = camera.aspect < 1 ? Math.pow(1 / camera.aspect, 0.6) : 1;
+  const distancia = c.distancia * ajusteTela;
+  const para = new THREE.Vector3(Math.sin(ang) * Math.cos(elev), Math.sin(elev), Math.cos(ang) * Math.cos(elev)).multiplyScalar(distancia).add(alvo);
   controls.minDistance = c.min ?? c.distancia * 0.45;
-  controls.maxDistance = c.max ?? c.distancia * 1.7;
+  controls.maxDistance = (c.max ?? c.distancia * 1.7) * ajusteTela;
   if (imediato) { camera.position.copy(para); controls.target.copy(alvo); }
   else moverCamera(para, alvo, 1.1);
 }

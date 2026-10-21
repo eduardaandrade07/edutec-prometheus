@@ -1,6 +1,8 @@
 /* Exploração 3D — segue os tokens de style.css (tema claro/escuro). */
 html[data-area="explorar"] { --area: var(--area3d, #c9ad7a); }
 .exp [hidden] { display: none !important; }
+.exp-app > *, .exp-abertura > * { min-width: 0; }
+.exp-info__rotulo { display: block; overflow-wrap: anywhere; }
 
 /* ---------- Abertura ---------- */
 .exp-abertura {

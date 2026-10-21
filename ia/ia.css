@@ -4,6 +4,7 @@ html[data-area="ia"] { --area: #e0a24a; --fogo: #f0b35a; --fogo-2: #c9742b; }
 html[data-theme="light"][data-area="ia"] { --area: #a8641c; --fogo: #b8711f; --fogo-2: #8e4f14; }
 
 .ia [hidden] { display: none !important; }
+.ia-app > * { min-width: 0; }
 
 .visualmente-oculto {
   position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
