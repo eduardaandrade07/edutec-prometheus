@@ -407,6 +407,13 @@ els.reset.addEventListener("click", () => {
 
 buildSuggestions();
 restoreHistory();
+// Pergunta vinda de outra página (ex.: Exploração 3D): preenche o campo, sem enviar sozinha.
+const sugerida = new URLSearchParams(window.location.search).get("pergunta");
+if (sugerida) {
+  els.input.value = sugerida.slice(0, MAX_CHARS);
+  autosize();
+  setTimeout(() => els.input.focus({ preventScroll: true }), 300);
+}
 updateSendState();
 startPortrait();
 checkService();
