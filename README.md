@@ -39,6 +39,20 @@ nunca no navegador nem nos arquivos do repositório.
 > Antes, confirme que as pastas `api/`, `ia/` e o arquivo `vercel.json` estão no repositório do GitHub
 > ligado à Vercel. Sem a pasta `api/`, não existe servidor para a IA.
 
+### Opção gratuita: Google Gemini
+
+O código também funciona com o Google Gemini, que tem um nível gratuito (sem cartão), porque ele aceita o mesmo formato da OpenAI.
+Crie uma chave em https://aistudio.google.com/apikey e cadastre na Vercel:
+
+| Variável | Valor |
+|---|---|
+| `OPENAI_API_KEY` | a chave do Gemini (começa com `AIza`) |
+| `OPENAI_BASE_URL` | `https://generativelanguage.googleapis.com/v1beta/openai` |
+| `OPENAI_MODEL` | `gemini-3.8-flash` |
+
+Depois faça Redeploy. O nível gratuito tem limite de pedidos por minuto e por dia.
+
+
 > A IA só funciona onde a pasta `api/` é executada como função: no site publicado na Vercel ou no
 > servidor local abaixo. Abrir o `index.html` direto do computador (ou com o Live Server) não roda a
 > função, e o chat mostrará que o servidor não foi encontrado.

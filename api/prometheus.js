@@ -40,7 +40,7 @@ function limparMensagens(lista) {
 // Traduz erros da OpenAI em mensagens claras, sem expor detalhes técnicos.
 function erroAmigavel(status, codigo) {
   if (status === 401) return { status: 500, mensagem: "A chave da API configurada no servidor é inválida." };
-  if (status === 429 && codigo === "insufficient_quota") return { status: 503, mensagem: "Os créditos da API acabaram. Verifique o faturamento da conta OpenAI." };
+  if (status === 429 && codigo === "insufficient_quota") return { status: 503, mensagem: "Os créditos da API acabaram. Verifique o faturamento da conta do provedor de IA." };
   if (status === 429) return { status: 429, mensagem: "Muitas perguntas ao mesmo tempo. Aguarde alguns segundos e tente de novo." };
   if (status === 404 || codigo === "model_not_found") return { status: 500, mensagem: "O modelo configurado não está disponível para esta chave." };
   if (status >= 500) return { status: 502, mensagem: "O serviço de IA está instável no momento. Tente novamente em instantes." };
@@ -85,7 +85,7 @@ async function atender(req, res) {
 
   let resposta;
   try {
-    resposta = await fetch(`${process.env.OPENAI_BASE_URL || "https://api.openai.com/v1"}/chat/completions`, {
+    resposta = await fetch(`${(process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/+$/, "")}/chat/completions`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${chave}` },
       body: JSON.stringify(montarPedido(mensagens)),
