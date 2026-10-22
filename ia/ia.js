@@ -199,6 +199,15 @@ async function ask(question) {
   await requestAnswer();
 }
 
+// Quando o servidor não devolve JSON, a causa costuma ser a hospedagem.
+function explicarFalha(status) {
+  if ([404, 405, 501].includes(status)) {
+    return `O servidor do assistente não foi encontrado (código ${status}). Esta página está aberta numa hospedagem sem a função da IA (arquivo local, Live Server ou GitHub Pages). A IA funciona no site publicado na Vercel ou com o servidor local (node scripts/dev-server.js).`;
+  }
+  if (status === 504) return "A resposta demorou demais (código 504). Tente novamente ou faça uma pergunta mais curta.";
+  return `O servidor do assistente falhou (código ${status}). Confira os logs da função na Vercel e tente novamente.`;
+}
+
 async function requestAnswer() {
   const article = addMessage("assistant", "", { pending: true });
   busy = true;
@@ -217,8 +226,7 @@ async function requestAnswer() {
     }
     let data = null;
     try { data = await response.json(); } catch { /* resposta sem JSON */ }
-    if (response.status === 404) throw new Error("O servidor do assistente não foi encontrado. A IA funciona no site publicado na Vercel ou com o servidor local (node scripts/dev-server.js).");
-    if (!response.ok) throw new Error(data?.erro || "Não foi possível obter a resposta. Tente novamente.");
+    if (!response.ok) throw new Error(data?.erro || explicarFalha(response.status));
     if (!data || typeof data.resposta !== "string") throw new Error("A resposta veio em um formato inesperado. Tente novamente.");
     article.querySelector(".ia-msg__texto").innerHTML = renderMarkdown(data.resposta);
     history.push({ role: "assistant", content: data.resposta });

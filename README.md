@@ -36,6 +36,9 @@ nunca no navegador nem nos arquivos do repositório.
 3. Opcional: `OPENAI_MODEL` para trocar o modelo (padrão: `gpt-5-mini`; por exemplo `gpt-6-luna`).
 4. Faça um novo deploy (**Deployments → Redeploy**). Variáveis novas só valem após um deploy.
 
+> Antes, confirme que as pastas `api/`, `ia/` e o arquivo `vercel.json` estão no repositório do GitHub
+> ligado à Vercel. Sem a pasta `api/`, não existe servidor para a IA.
+
 > A IA só funciona onde a pasta `api/` é executada como função: no site publicado na Vercel ou no
 > servidor local abaixo. Abrir o `index.html` direto do computador (ou com o Live Server) não roda a
 > função, e o chat mostrará que o servidor não foi encontrado.
@@ -65,6 +68,8 @@ os preços atuais em <https://openai.com/api/pricing>.
 | Mensagem | O que fazer |
 |---|---|
 | “falta a variável OPENAI_API_KEY” | Cadastre a chave na Vercel e faça Redeploy. |
+| “servidor do assistente não foi encontrado (código 404/405/501)” | A página não está na Vercel (arquivo local, Live Server ou GitHub Pages), ou a pasta `api/` não foi enviada ao GitHub. |
+| “o servidor do assistente falhou (código …)” | Veja Vercel → Deployments → Functions/Logs. |
 | “A chave da API … é inválida” | Gere uma nova chave e substitua a variável. |
 | “Os créditos da API acabaram” | Adicione créditos no faturamento da OpenAI. |
 | “O modelo configurado não está disponível” | Remova `OPENAI_MODEL` ou use um modelo disponível para a conta. |

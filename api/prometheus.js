@@ -47,7 +47,26 @@ function erroAmigavel(status, codigo) {
   return { status: 502, mensagem: "Não foi possível gerar a resposta. Tente reformular a pergunta." };
 }
 
+// Modelos de raciocínio (gpt-5, o-series) ficam bem mais rápidos com esforço baixo,
+// o que evita estourar o tempo limite da função na Vercel.
+function montarPedido(mensagens) {
+  const model = process.env.OPENAI_MODEL || "gpt-5-mini";
+  const pedido = { model, messages: [{ role: "system", content: SYSTEM_PROMPT }, ...mensagens] };
+  if (/^(gpt-5|o\d)/.test(model)) pedido.reasoning_effort = "low";
+  return pedido;
+}
+
+// Garante que qualquer falha inesperada também volte como JSON legível.
 module.exports = async function handler(req, res) {
+  try {
+    await atender(req, res);
+  } catch (erro) {
+    console.error("Prometheus:", erro);
+    if (!res.headersSent) responder(res, 500, { erro: "Erro interno no servidor do assistente. Tente novamente." });
+  }
+};
+
+async function atender(req, res) {
   if (req.method !== "POST") return responder(res, 405, { erro: "Use POST para enviar mensagens." });
 
   const chave = process.env.OPENAI_API_KEY;
@@ -69,10 +88,7 @@ module.exports = async function handler(req, res) {
     resposta = await fetch(`${process.env.OPENAI_BASE_URL || "https://api.openai.com/v1"}/chat/completions`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${chave}` },
-      body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-5-mini",
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...mensagens],
-      }),
+      body: JSON.stringify(montarPedido(mensagens)),
       signal: AbortSignal.timeout(55_000),
     });
   } catch (erro) {
@@ -95,4 +111,4 @@ module.exports = async function handler(req, res) {
     return responder(res, 502, { erro: "A IA retornou uma resposta vazia. Tente novamente." });
   }
   return responder(res, 200, { resposta: texto.trim() });
-};
+}
