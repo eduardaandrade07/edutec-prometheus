@@ -100,26 +100,28 @@ async function atender(req, res) {
   }
 
   const config = configuracao(chave);
-  let resposta;
+  let resultado;
   try {
-    resposta = await fetch(config.endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${chave}` },
-      body: JSON.stringify(montarPedido(mensagens, config.modelo)),
-      signal: AbortSignal.timeout(55_000),
-    });
+    resultado = await chamar(config, chave, mensagens, config.modelo);
+    // Modelo recusado e sem OPENAI_MODEL definido: escolhe um modelo que a chave pode usar.
+    if (modeloRecusado(resultado) && !(process.env.OPENAI_MODEL || "").trim()) {
+      const alternativo = await escolherModelo(config, chave);
+      if (alternativo && alternativo !== config.modelo) {
+        config.modelo = alternativo;
+        resultado = await chamar(config, chave, mensagens, alternativo);
+      }
+    }
   } catch (erro) {
     const tempo = erro && (erro.name === "TimeoutError" || erro.name === "AbortError");
     return responder(res, 504, { erro: tempo ? "A resposta demorou demais. Tente uma pergunta mais curta." : "Não foi possível conectar ao serviço de IA." });
   }
-
-  let dados = null;
-  try { dados = await resposta.json(); } catch { /* resposta sem JSON */ }
+  const { resposta, dados } = resultado;
 
   if (!resposta.ok) {
-    console.error("OpenAI:", resposta.status, dados?.error?.code || "", dados?.error?.message || "");
+    console.error("IA:", config.provedor, config.modelo, resposta.status, dados?.error?.code || "", dados?.error?.message || "");
     const { status, mensagem } = erroAmigavel(resposta.status, dados?.error?.code, config);
-    return responder(res, status, { erro: mensagem });
+    const detalhe = typeof dados?.error?.message === "string" ? ` Detalhe do provedor: ${dados.error.message.replace(/(sk|gsk|AIza)[-_A-Za-z0-9]{8,}/g, "[chave]").slice(0, 200)}` : "";
+    return responder(res, status, { erro: mensagem + (status === 500 || status === 502 ? detalhe : "") });
   }
 
   if (!dados) return responder(res, 502, { erro: "A IA retornou uma resposta em formato inesperado. Tente novamente." });
@@ -128,4 +130,40 @@ async function atender(req, res) {
     return responder(res, 502, { erro: "A IA retornou uma resposta vazia. Tente novamente." });
   }
   return responder(res, 200, { resposta: texto.trim() });
+}
+
+async function chamar(config, chave, mensagens, modelo) {
+  const resposta = await fetch(config.endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${chave}` },
+    body: JSON.stringify(montarPedido(mensagens, modelo)),
+    signal: AbortSignal.timeout(55_000),
+  });
+  let dados = null;
+  try { dados = await resposta.json(); } catch { /* resposta sem JSON */ }
+  return { resposta, dados };
+}
+
+function modeloRecusado({ resposta, dados }) {
+  const codigo = dados?.error?.code;
+  return resposta.status === 404 || codigo === "model_not_found" || codigo === "model_decommissioned" || codigo === "model_permission_blocked_project";
+}
+
+// Pergunta ao provedor quais modelos a chave pode usar e escolhe um de conversa.
+const PREFERIDOS = ["llama-3.3-70b-versatile", "openai/gpt-oss-120b", "openai/gpt-oss-20b", "llama-3.1-8b-instant", "gpt-5-mini", "gpt-4.1-mini"];
+async function escolherModelo(config, chave) {
+  try {
+    const r = await fetch(config.endpoint.replace(/\/chat\/completions$/, "/models"), {
+      headers: { Authorization: `Bearer ${chave}` },
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!r.ok) return null;
+    const ids = ((await r.json())?.data || [])
+      .filter((m) => m && m.id && m.active !== false)
+      .map((m) => String(m.id).replace(/^models\//, ""))
+      .filter((id) => !/whisper|tts|audio|guard|embed|image|vision|transcri|moderation|realtime|search|compound|orpheus|playai/i.test(id));
+    return PREFERIDOS.find((id) => ids.includes(id)) || ids[0] || null;
+  } catch {
+    return null;
+  }
 }
