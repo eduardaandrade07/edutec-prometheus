@@ -5,7 +5,9 @@
 //
 // Variáveis de ambiente:
 //   OPENAI_API_KEY  (obrigatória) chave da API da OpenAI
-//   OPENAI_MODEL    (opcional)    padrão: gpt-5-mini
+//   OPENAI_MODEL    (opcional)    padrão conforme o provedor
+//   OPENAI_BASE_URL (opcional)    só para provedores não reconhecidos pela chave
+// O provedor é reconhecido pelo início da chave: gsk_ = Groq, AIza = Gemini, outras = OpenAI.
 "use strict";
 
 const { SYSTEM_PROMPT } = require("./_prometheus-persona.js");
@@ -42,15 +44,28 @@ function erroAmigavel(status, codigo) {
   if (status === 401) return { status: 500, mensagem: "A chave da API configurada no servidor é inválida." };
   if (status === 429 && codigo === "insufficient_quota") return { status: 503, mensagem: "Os créditos da API acabaram. Verifique o faturamento da conta do provedor de IA." };
   if (status === 429) return { status: 429, mensagem: "Muitas perguntas ao mesmo tempo. Aguarde alguns segundos e tente de novo." };
-  if (status === 404 || codigo === "model_not_found") return { status: 500, mensagem: "O modelo configurado não está disponível para esta chave." };
+  if (status === 404 || codigo === "model_not_found") return { status: 500, mensagem: "O modelo configurado não está disponível para esta chave. Confira a variável OPENAI_MODEL (ou apague-a para usar o padrão)." };
   if (status >= 500) return { status: 502, mensagem: "O serviço de IA está instável no momento. Tente novamente em instantes." };
   return { status: 502, mensagem: "Não foi possível gerar a resposta. Tente reformular a pergunta." };
 }
 
+const PROVEDORES = [
+  { prefixo: "gsk_", url: "https://api.groq.com/openai/v1", modelo: "llama-3.3-70b-versatile" },
+  { prefixo: "AIza", url: "https://generativelanguage.googleapis.com/v1beta/openai", modelo: "gemini-3.8-flash" },
+];
+
+function configuracao(chave) {
+  const conhecido = PROVEDORES.find((p) => chave.startsWith(p.prefixo));
+  const url = conhecido ? conhecido.url : (process.env.OPENAI_BASE_URL || "").trim() || "https://api.openai.com/v1";
+  return {
+    endpoint: url.replace(/\/+$/, "").replace(/\/chat\/completions$/, "") + "/chat/completions",
+    modelo: (process.env.OPENAI_MODEL || "").trim() || (conhecido ? conhecido.modelo : "gpt-5-mini"),
+  };
+}
+
 // Modelos de raciocínio (gpt-5, o-series) ficam bem mais rápidos com esforço baixo,
 // o que evita estourar o tempo limite da função na Vercel.
-function montarPedido(mensagens) {
-  const model = process.env.OPENAI_MODEL || "gpt-5-mini";
+function montarPedido(mensagens, model) {
   const pedido = { model, messages: [{ role: "system", content: SYSTEM_PROMPT }, ...mensagens] };
   if (/^(gpt-5|o\d)/.test(model)) pedido.reasoning_effort = "low";
   return pedido;
@@ -69,7 +84,7 @@ module.exports = async function handler(req, res) {
 async function atender(req, res) {
   if (req.method !== "POST") return responder(res, 405, { erro: "Use POST para enviar mensagens." });
 
-  const chave = process.env.OPENAI_API_KEY;
+  const chave = (process.env.OPENAI_API_KEY || "").trim();
   if (!chave) return responder(res, 503, { erro: "O assistente ainda não foi configurado: falta a variável OPENAI_API_KEY no servidor." });
 
   let corpo;
@@ -83,12 +98,13 @@ async function atender(req, res) {
     return responder(res, 400, { erro: "Escreva uma pergunta antes de enviar." });
   }
 
+  const config = configuracao(chave);
   let resposta;
   try {
-    resposta = await fetch(`${(process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/+$/, "")}/chat/completions`, {
+    resposta = await fetch(config.endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${chave}` },
-      body: JSON.stringify(montarPedido(mensagens)),
+      body: JSON.stringify(montarPedido(mensagens, config.modelo)),
       signal: AbortSignal.timeout(55_000),
     });
   } catch (erro) {

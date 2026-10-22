@@ -39,62 +39,15 @@ nunca no navegador nem nos arquivos do repositório.
 > Antes, confirme que as pastas `api/`, `ia/` e o arquivo `vercel.json` estão no repositório do GitHub
 > ligado à Vercel. Sem a pasta `api/`, não existe servidor para a IA.
 
-### Opção gratuita: Google Gemini
+### Provedores gratuitos (Groq ou Gemini)
 
-O código também funciona com o Google Gemini, que tem um nível gratuito (sem cartão), porque ele aceita o mesmo formato da OpenAI.
-Crie uma chave em https://aistudio.google.com/apikey e cadastre na Vercel:
+O servidor reconhece o provedor pelo início da chave e já usa o endereço e o modelo certos.
+Basta cadastrar **só** a variável `OPENAI_API_KEY`:
 
-| Variável | Valor |
-|---|---|
-| `OPENAI_API_KEY` | a chave do Gemini (começa com `AIza`) |
-| `OPENAI_BASE_URL` | `https://generativelanguage.googleapis.com/v1beta/openai` |
-| `OPENAI_MODEL` | `gemini-3.8-flash` |
+- **Groq** (grátis, sem cartão): chave em https://console.groq.com/keys (começa com `gsk_`). Modelo padrão: `llama-3.3-70b-versatile`.
+- **Gemini** (grátis): chave em https://aistudio.google.com/apikey (começa com `AIza`). Modelo padrão: `gemini-3.8-flash`.
 
-Depois faça Redeploy. O nível gratuito tem limite de pedidos por minuto e por dia.
-
-
-> A IA só funciona onde a pasta `api/` é executada como função: no site publicado na Vercel ou no
-> servidor local abaixo. Abrir o `index.html` direto do computador (ou com o Live Server) não roda a
-> função, e o chat mostrará que o servidor não foi encontrado.
-
-### 3. Testar no computador (opcional)
-
-Requer Node.js 18 ou superior.
-
-```bash
-# na raiz do projeto
-echo "OPENAI_API_KEY=sk-sua-chave" > .env.local
-node scripts/dev-server.js
-# abra http://localhost:3000/ia/
-```
-
-O arquivo `.env.local` está no `.gitignore` e não é enviado ao GitHub.
-
-### Custos
-
-O modelo padrão `gpt-5-mini` é um dos mais econômicos da OpenAI. Uma pergunta típica (instruções +
-conversa + resposta) custa uma fração de centavo de dólar; conversas longas custam mais, porque o
-histórico é reenviado a cada pergunta (o servidor envia no máximo as últimas 20 mensagens). Confira
-os preços atuais em <https://openai.com/api/pricing>.
-
-### Mensagens de erro do chat
-
-| Mensagem | O que fazer |
-|---|---|
-| “falta a variável OPENAI_API_KEY” | Cadastre a chave na Vercel e faça Redeploy. |
-| “servidor do assistente não foi encontrado (código 404/405/501)” | A página não está na Vercel (arquivo local, Live Server ou GitHub Pages), ou a pasta `api/` não foi enviada ao GitHub. |
-| “o servidor do assistente falhou (código …)” | Veja Vercel → Deployments → Functions/Logs. |
-| “A chave da API … é inválida” | Gere uma nova chave e substitua a variável. |
-| “Os créditos da API acabaram” | Adicione créditos no faturamento da OpenAI. |
-| “O modelo configurado não está disponível” | Remova `OPENAI_MODEL` ou use um modelo disponível para a conta. |
-| “servidor do assistente não foi encontrado” | Use o site publicado na Vercel ou o servidor local. |
-
-### Personalidade
-
-As instruções do personagem ficam em `api/_prometheus-persona.js` (arquivos iniciados por `_` não
-viram rotas na Vercel). Edite esse arquivo para ajustar o tom.
-
----
+`OPENAI_MODEL` é opcional (troca o modelo). `OPENAI_BASE_URL` só é usada para outros provedores compatíveis com a OpenAI.
 
 ## Exploração 3D
 
