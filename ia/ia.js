@@ -1,10 +1,9 @@
 // Assistente Prometheus: interface de conversa.
-// Envia o histórico para /api/prometheus (função serverless) e exibe a
-// resposta em streaming. A chave da API nunca passa pelo navegador.
+// Envia a conversa para /api/prometheus (função serverless na Vercel), que
+// consulta a OpenAI e devolve a resposta. A chave nunca passa pelo navegador.
 import { PrometheusPortrait } from "./prometheus-portrait.js";
 
 const API = "/api/prometheus";
-const STORAGE_KEY = "prometheus-conversa-v1";
 const MAX_CHARS = 2000;
 
 const AREAS = [
@@ -26,23 +25,18 @@ const els = {
   form: $("#formulario"),
   input: $("#pergunta"),
   send: $("#enviar"),
-  stop: $("#parar"),
   counter: $("#contador"),
   suggestions: $("#sugestoes"),
   suggestionList: $("#listaSugestoes"),
   reset: $("#novaConversa"),
-  notice: $("#avisoServico"),
-  service: $("#statusServico"),
   state: $("#estadoMentor"),
   figure: document.querySelector(".ia-mentor__retrato"),
   canvas: $("#retratoCanvas"),
 };
 
-let history = [];
+let history = []; // mensagens da sessão: { role: "user" | "assistant", content }
 let busy = false;
-let controller = null;
 let portrait = null;
-let available = true;
 
 // --------------------------------------------------------------------------
 // Markdown seguro (somente o subconjunto pedido nas instruções do assistente)
@@ -114,46 +108,35 @@ function renderMarkdown(source) {
 }
 
 // --------------------------------------------------------------------------
-// Estado visual do mentor
+// Retrato e estado do mentor
 // --------------------------------------------------------------------------
 const STATE_TEXT = {
   repouso: "Pronto para conversar",
   pensando: "Refletindo sobre a sua pergunta…",
-  falando: "Respondendo…",
   erro: "Não foi possível responder agora",
-  inativo: "Assistente ainda não ativado",
 };
 
 function setMentorState(state) {
   els.state.dataset.estado = state;
-  els.state.querySelector("span").textContent = STATE_TEXT[state] || STATE_TEXT.repouso;
+  els.state.querySelector("span").textContent = STATE_TEXT[state];
   els.figure.dataset.estado = state;
-  portrait?.setState(state === "pensando" ? "thinking" : state === "falando" ? "speaking" : "idle");
+  portrait?.setState(state === "pensando" ? "thinking" : "idle");
 }
 
 function startPortrait() {
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   try {
-    portrait = new PrometheusPortrait(els.canvas, { reducedMotion: reduced });
+    portrait = new PrometheusPortrait(els.canvas, { reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches });
     portrait.frame(performance.now());
     els.figure.classList.add("is-vivo");
     portrait.loop();
-  } catch (error) {
-    // Sem WebGL2: a imagem estática de alta qualidade permanece visível.
-    console.info("Retrato em tempo real indisponível; usando imagem.", error);
-    portrait = null;
+  } catch {
+    portrait = null; // sem WebGL2: a imagem estática do busto continua visível
   }
 }
 
 // --------------------------------------------------------------------------
 // Mensagens
 // --------------------------------------------------------------------------
-function scrollToEnd(force = false) {
-  const log = els.log;
-  const nearBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 140;
-  if (force || nearBottom) log.scrollTop = log.scrollHeight;
-}
-
 function addMessage(role, content, { pending = false } = {}) {
   const article = document.createElement("article");
   article.className = `ia-msg ia-msg--${role === "user" ? "usuario" : "prometheus"}`;
@@ -163,15 +146,16 @@ function addMessage(role, content, { pending = false } = {}) {
   } else {
     article.innerHTML = '<img class="ia-avatar" src="prometheus-avatar.jpg" alt="" width="40" height="40"><div class="ia-msg__corpo"><span class="ia-msg__autor">Prometheus</span><div class="ia-msg__texto"></div></div>';
     const body = article.querySelector(".ia-msg__texto");
-    if (pending) body.innerHTML = '<span class="ia-pensando"><span class="ia-pensando__brasas" aria-hidden="true"><i></i><i></i><i></i></span>Refletindo…</span>';
-    else body.innerHTML = renderMarkdown(content);
+    body.innerHTML = pending
+      ? '<span class="ia-pensando"><span class="ia-pensando__brasas" aria-hidden="true"><i></i><i></i><i></i></span>Refletindo…</span>'
+      : renderMarkdown(content);
   }
   els.log.appendChild(article);
-  scrollToEnd(true);
+  els.log.scrollTop = els.log.scrollHeight;
   return article;
 }
 
-function showFailure(article, message, retry) {
+function showError(article, message) {
   article.classList.add("ia-msg--erro");
   const body = article.querySelector(".ia-msg__texto");
   body.innerHTML = "";
@@ -179,52 +163,24 @@ function showFailure(article, message, retry) {
   box.className = "ia-msg__falha";
   box.setAttribute("role", "alert");
   box.textContent = message;
-  body.appendChild(box);
-  if (retry) {
-    const actions = document.createElement("div");
-    actions.className = "ia-msg__acoes";
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = "Tentar novamente";
-    button.addEventListener("click", () => { article.remove(); retry(); });
-    actions.appendChild(button);
-    body.appendChild(actions);
-  }
-}
-
-function saveHistory() {
-  try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(-40))); } catch { /* armazenamento indisponível */ }
-}
-
-function restoreHistory() {
-  try {
-    const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "[]");
-    if (Array.isArray(saved) && saved.length) {
-      history = saved.filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string");
-      history.forEach((m) => addMessage(m.role, m.content));
-    }
-  } catch { history = []; }
-  updateChrome();
+  const actions = document.createElement("div");
+  actions.className = "ia-msg__acoes";
+  const retry = document.createElement("button");
+  retry.type = "button";
+  retry.textContent = "Tentar novamente";
+  retry.addEventListener("click", () => { article.remove(); requestAnswer(); });
+  actions.appendChild(retry);
+  body.append(box, actions);
 }
 
 function updateChrome() {
-  const hasConversation = history.length > 0;
-  els.suggestions.hidden = hasConversation;
-  els.reset.hidden = !hasConversation;
-}
-
-function setBusy(value) {
-  busy = value;
-  els.send.hidden = value;
-  els.stop.hidden = !value;
-  updateSendState();
+  els.suggestions.hidden = history.length > 0;
+  els.reset.hidden = history.length === 0;
 }
 
 function updateSendState() {
-  const length = els.input.value.trim().length;
-  els.send.disabled = busy || !available || length === 0 || els.input.value.length > MAX_CHARS;
+  els.send.disabled = busy || !els.input.value.trim() || els.input.value.length > MAX_CHARS;
   els.counter.textContent = `${els.input.value.length} / ${MAX_CHARS}`;
-  els.counter.classList.toggle("is-limite", els.input.value.length > MAX_CHARS * 0.9);
 }
 
 function autosize() {
@@ -236,9 +192,8 @@ function autosize() {
 // Comunicação com o servidor
 // --------------------------------------------------------------------------
 async function ask(question) {
-  if (busy || !available) return;
+  if (busy) return;
   history.push({ role: "user", content: question });
-  saveHistory();
   addMessage("user", question);
   updateChrome();
   await requestAnswer();
@@ -246,147 +201,63 @@ async function ask(question) {
 
 async function requestAnswer() {
   const article = addMessage("assistant", "", { pending: true });
-  const body = article.querySelector(".ia-msg__texto");
-  setBusy(true);
+  busy = true;
+  updateSendState();
   setMentorState("pensando");
-  controller = new AbortController();
-  let text = "";
-  let renderQueued = false;
-  let complete = false;
-  const render = () => {
-    renderQueued = false;
-    if (complete) return;
-    // Durante o streaming, esconde marcações ainda não fechadas (ex.: "**pala").
-    let visible = text;
-    if ((visible.match(/\*\*/g) || []).length % 2) visible = visible.replace(/\*\*(?!.*\*\*)/s, "");
-    body.innerHTML = renderMarkdown(visible);
-    body.lastElementChild?.classList.add("ia-cursor");
-    scrollToEnd();
-  };
-
   try {
-    const response = await fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: history }),
-      signal: controller.signal,
-    });
-    if (!response.ok) {
-      let info = {};
-      try { info = await response.json(); } catch { /* resposta sem JSON */ }
-      if (response.status === 404) info.message = "O servidor do assistente não foi encontrado. Ele funciona quando o site está publicado na Vercel ou rodando com o servidor local do projeto.";
-      if (info.code === "not_configured" || response.status === 404) markUnavailable(info.message);
-      throw Object.assign(new Error(info.message || "Não foi possível obter a resposta."), { retryable: response.status >= 500 || response.status === 429 });
+    let response;
+    try {
+      response = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: history }),
+      });
+    } catch {
+      throw new Error("Sem conexão com o servidor. Verifique sua internet e tente novamente.");
     }
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-    let finished = false;
-    setMentorState("falando");
-    while (!finished) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      let index;
-      while ((index = buffer.indexOf("\n\n")) !== -1) {
-        const line = buffer.slice(0, index).trim();
-        buffer = buffer.slice(index + 2);
-        if (!line.startsWith("data:")) continue;
-        let event;
-        try { event = JSON.parse(line.slice(5)); } catch { continue; }
-        if (event.t) {
-          text += event.t;
-          if (!renderQueued) { renderQueued = true; requestAnimationFrame(render); }
-        } else if (event.error) {
-          throw Object.assign(new Error(event.error), { retryable: true, partial: text });
-        } else if (event.done) {
-          finished = true;
-        }
-      }
-    }
-    if (!text.trim()) throw Object.assign(new Error("A resposta veio vazia. Tente reformular a pergunta."), { retryable: true });
-    complete = true;
-    body.innerHTML = renderMarkdown(text);
-    history.push({ role: "assistant", content: text });
-    saveHistory();
+    let data = null;
+    try { data = await response.json(); } catch { /* resposta sem JSON */ }
+    if (response.status === 404) throw new Error("O servidor do assistente não foi encontrado. A IA funciona no site publicado na Vercel ou com o servidor local (node scripts/dev-server.js).");
+    if (!response.ok) throw new Error(data?.erro || "Não foi possível obter a resposta. Tente novamente.");
+    if (!data || typeof data.resposta !== "string") throw new Error("A resposta veio em um formato inesperado. Tente novamente.");
+    article.querySelector(".ia-msg__texto").innerHTML = renderMarkdown(data.resposta);
+    history.push({ role: "assistant", content: data.resposta });
     setMentorState("repouso");
   } catch (error) {
-    complete = true;
-    if (error.name === "AbortError") {
-      if (text.trim()) {
-        body.innerHTML = renderMarkdown(`${text}\n\n*(resposta interrompida)*`);
-        history.push({ role: "assistant", content: text });
-        saveHistory();
-      } else {
-        article.remove();
-        history.pop();
-        saveHistory();
-        updateChrome();
-      }
-      setMentorState("repouso");
-    } else {
-      const message = error instanceof TypeError ? "Sem conexão com o servidor. Verifique sua internet e tente novamente." : error.message;
-      showFailure(article, message, error.retryable !== false && available ? () => requestAnswer() : null);
-      setMentorState(available ? "erro" : "inativo");
-      if (available) setTimeout(() => { if (!busy) setMentorState("repouso"); }, 4000);
-    }
+    showError(article, error.message);
+    setMentorState("erro");
   } finally {
-    controller = null;
-    setBusy(false);
-    if (available) els.input.focus({ preventScroll: true });
-  }
-}
-
-function markUnavailable(message) {
-  available = false;
-  els.notice.hidden = false;
-  els.notice.innerHTML = `<strong>Assistente ainda não ativado.</strong> ${escapeHtml(message || "")} A configuração está descrita no arquivo <code>README.md</code> do projeto.`;
-  els.service.textContent = "Aguardando configuração";
-  els.input.placeholder = "O assistente estará disponível assim que for configurado.";
-  setMentorState("inativo");
-  updateSendState();
-}
-
-async function checkService() {
-  try {
-    const response = await fetch(API, { method: "GET", headers: { Accept: "application/json" } });
-    if (response.status === 404) return markUnavailable("O servidor do assistente não foi encontrado. Ele funciona quando o site está publicado na Vercel ou rodando com o servidor local do projeto.");
-    const info = await response.json();
-    if (!info.configured) markUnavailable("Falta definir a chave da API (ANTHROPIC_API_KEY) nas variáveis de ambiente do servidor.");
-    else els.service.textContent = "Assistente educacional · online";
-  } catch {
-    // Rede instável: a verificação real acontece no envio.
+    busy = false;
+    updateSendState();
+    els.log.scrollTop = els.log.scrollHeight;
+    els.input.focus({ preventScroll: true });
   }
 }
 
 // --------------------------------------------------------------------------
 // Inicialização
 // --------------------------------------------------------------------------
-function buildSuggestions() {
-  const fragment = document.createDocumentFragment();
-  AREAS.forEach((area) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "ia-sugestao";
-    button.style.setProperty("--cor", area.cor);
-    button.innerHTML = `<span class="ia-sugestao__ponto" aria-hidden="true"></span><span><small>${escapeHtml(area.nome)}</small>${escapeHtml(area.pergunta)}</span>`;
-    button.addEventListener("click", () => ask(area.pergunta));
-    fragment.appendChild(button);
-  });
-  els.suggestionList.appendChild(fragment);
-}
+AREAS.forEach((area) => {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "ia-sugestao";
+  button.style.setProperty("--cor", area.cor);
+  button.innerHTML = `<span class="ia-sugestao__ponto" aria-hidden="true"></span><span><small>${escapeHtml(area.nome)}</small>${escapeHtml(area.pergunta)}</span>`;
+  button.addEventListener("click", () => ask(area.pergunta));
+  els.suggestionList.appendChild(button);
+});
 
 els.form.addEventListener("submit", (event) => {
   event.preventDefault();
   const question = els.input.value.trim();
-  if (!question || busy || !available) return;
-  if (question.length > MAX_CHARS) return;
+  if (!question || busy || question.length > MAX_CHARS) return;
   els.input.value = "";
   autosize();
   updateSendState();
   ask(question);
 });
 
+// Enter envia; Shift + Enter quebra a linha.
 els.input.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
     event.preventDefault();
@@ -394,26 +265,20 @@ els.input.addEventListener("keydown", (event) => {
   }
 });
 els.input.addEventListener("input", () => { autosize(); updateSendState(); });
-els.stop.addEventListener("click", () => controller?.abort());
+
 els.reset.addEventListener("click", () => {
-  if (busy) controller?.abort();
+  if (busy) return;
   history = [];
-  saveHistory();
   els.log.querySelectorAll(".ia-msg:not(.ia-msg--abertura)").forEach((node) => node.remove());
   updateChrome();
-  setMentorState(available ? "repouso" : "inativo");
+  setMentorState("repouso");
   els.input.focus();
 });
 
-buildSuggestions();
-restoreHistory();
-// Pergunta vinda de outra página (ex.: Exploração 3D): preenche o campo, sem enviar sozinha.
+// Pergunta vinda de outra página (ex.: Exploração 3D): só preenche o campo.
 const sugerida = new URLSearchParams(window.location.search).get("pergunta");
-if (sugerida) {
-  els.input.value = sugerida.slice(0, MAX_CHARS);
-  autosize();
-  setTimeout(() => els.input.focus({ preventScroll: true }), 300);
-}
+if (sugerida) { els.input.value = sugerida.slice(0, MAX_CHARS); autosize(); }
+
+updateChrome();
 updateSendState();
 startPortrait();
-checkService();

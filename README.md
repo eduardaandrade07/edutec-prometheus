@@ -19,36 +19,26 @@ servidor é a função `api/prometheus.js`, executada automaticamente pela Verce
 
 ## Ativar o assistente Prometheus
 
-O assistente usa a API do Claude (Anthropic). A chave fica **somente no servidor**, em uma variável
-de ambiente — ela nunca aparece no navegador nem nos arquivos do repositório.
+O chat da página `ia/` envia a conversa para a função `api/prometheus.js`, que consulta a API da
+**OpenAI** e devolve a resposta. A chave fica **somente no servidor**, em uma variável de ambiente —
+nunca no navegador nem nos arquivos do repositório.
 
-Sem a chave, a página `ia/` funciona normalmente, mas mostra o aviso “Assistente ainda não ativado”
-e não envia perguntas.
+### 1. Criar a chave
 
-### 1. Criar a chave da API
-
-1. Acesse <https://platform.claude.com> e crie uma conta (ou entre na sua).
-2. Adicione créditos ou um método de pagamento em **Billing**.
-3. Em **API Keys**, crie uma chave (começa com `sk-ant-…`). Copie e guarde em local seguro.
-4. Recomendado: nas configurações da organização, defina um limite mensal de gastos (*spend limit*).
+1. Acesse <https://platform.openai.com>, entre na conta e adicione créditos em **Billing**.
+2. Em **API keys**, crie uma chave (começa com `sk-`). Copie e guarde em local seguro.
+3. Recomendado: defina um limite de gastos mensal nas configurações de faturamento.
 
 ### 2. Configurar na Vercel
 
-1. No painel da Vercel, abra o projeto do site → **Settings** → **Environment Variables**.
-2. Adicione:
+1. No painel da Vercel, abra o projeto → **Settings** → **Environment Variables**.
+2. Adicione `OPENAI_API_KEY` com o valor da chave (marque *Production* e *Preview*).
+3. Opcional: `OPENAI_MODEL` para trocar o modelo (padrão: `gpt-5-mini`; por exemplo `gpt-6-luna`).
+4. Faça um novo deploy (**Deployments → Redeploy**). Variáveis novas só valem após um deploy.
 
-   | Nome | Valor | Obrigatória |
-   |---|---|---|
-   | `ANTHROPIC_API_KEY` | a chave `sk-ant-…` | sim |
-   | `PROMETHEUS_MODEL` | `claude-haiku-5-5` (padrão) ou `claude-sonnet-5-5` | não |
-   | `PROMETHEUS_MAX_TOKENS` | tamanho máximo da resposta (padrão `1200`) | não |
-   | `PROMETHEUS_ALLOWED_ORIGINS` | domínios extras autorizados, separados por vírgula | não |
-
-3. Faça um novo deploy (**Deployments → Redeploy**) para que a variável entre em vigor.
-4. Abra `https://seu-site/ia/` — o topo da conversa deve mostrar “Assistente educacional · online”.
-
-> Nunca coloque a chave em arquivos `.js`, `.html` ou no GitHub. Se uma chave vazar, apague-a no
-> console da Anthropic e crie outra.
+> A IA só funciona onde a pasta `api/` é executada como função: no site publicado na Vercel ou no
+> servidor local abaixo. Abrir o `index.html` direto do computador (ou com o Live Server) não roda a
+> função, e o chat mostrará que o servidor não foi encontrado.
 
 ### 3. Testar no computador (opcional)
 
@@ -56,35 +46,34 @@ Requer Node.js 18 ou superior.
 
 ```bash
 # na raiz do projeto
-echo "ANTHROPIC_API_KEY=sk-ant-sua-chave" > .env.local
+echo "OPENAI_API_KEY=sk-sua-chave" > .env.local
 node scripts/dev-server.js
 # abra http://localhost:3000/ia/
 ```
 
 O arquivo `.env.local` está no `.gitignore` e não é enviado ao GitHub.
 
-### Custos e limites
+### Custos
 
-- Modelo padrão: **Claude Haiku 5.5**, o mais rápido e econômico (a partir de US$ 0,10 por milhão de
-  tokens de entrada e US$ 0,50 por milhão de tokens de saída). Uma pergunta típica usa cerca de
-  3 mil tokens de entrada (instruções + conversa) e 500 de saída — algo em torno de
-  **US$ 0,0006 por resposta**, ou cerca de US$ 0,60 a cada mil respostas. Conversas longas custam mais,
-  porque o histórico é reenviado a cada pergunta. Confira os preços atuais em
-  <https://platform.claude.com/docs/en/about-claude/pricing>.
-- `claude-sonnet-5-5` dá respostas mais elaboradas, por um custo cerca de 20 vezes maior.
-- Proteções já incluídas na função:
-  - até **12 perguntas por minuto por visitante** (por instância do servidor);
-  - perguntas de até **2.000 caracteres** e histórico limitado às últimas **24 mensagens**;
-  - só aceita chamadas vindas do próprio site;
-  - tempo máximo de 60 s por resposta.
-- Para controle de gastos definitivo, use o limite mensal no console da Anthropic.
+O modelo padrão `gpt-5-mini` é um dos mais econômicos da OpenAI. Uma pergunta típica (instruções +
+conversa + resposta) custa uma fração de centavo de dólar; conversas longas custam mais, porque o
+histórico é reenviado a cada pergunta (o servidor envia no máximo as últimas 20 mensagens). Confira
+os preços atuais em <https://openai.com/api/pricing>.
 
-### Personalidade e segurança
+### Mensagens de erro do chat
+
+| Mensagem | O que fazer |
+|---|---|
+| “falta a variável OPENAI_API_KEY” | Cadastre a chave na Vercel e faça Redeploy. |
+| “A chave da API … é inválida” | Gere uma nova chave e substitua a variável. |
+| “Os créditos da API acabaram” | Adicione créditos no faturamento da OpenAI. |
+| “O modelo configurado não está disponível” | Remova `OPENAI_MODEL` ou use um modelo disponível para a conta. |
+| “servidor do assistente não foi encontrado” | Use o site publicado na Vercel ou o servidor local. |
+
+### Personalidade
 
 As instruções do personagem ficam em `api/_prometheus-persona.js` (arquivos iniciados por `_` não
-viram rotas na Vercel). Elas definem o tom de mentor, priorizam as dez áreas do site, pedem que o
-assistente diferencie fatos de incertezas, não invente dados e recuse pedidos perigosos (por exemplo,
-instruções para modificar patógenos). Para mudar o comportamento, edite esse arquivo.
+viram rotas na Vercel). Edite esse arquivo para ajustar o tom.
 
 ---
 

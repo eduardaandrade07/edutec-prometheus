@@ -2,7 +2,7 @@
 // Servidor local para testar o site com o assistente Prometheus.
 // Uso:  node scripts/dev-server.js   (abre em http://localhost:3000)
 // A chave pode ficar em um arquivo .env.local na raiz do projeto:
-//   ANTHROPIC_API_KEY=sk-ant-...
+//   OPENAI_API_KEY=sk-...
 // O arquivo .env.local está no .gitignore e nunca deve ser enviado ao GitHub.
 "use strict";
 
@@ -38,7 +38,7 @@ const server = http.createServer(async (req, res) => {
     } catch (error) {
       console.error(error);
       if (!res.headersSent) res.writeHead(500, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ code: "server", message: "Erro interno no servidor local." }));
+      res.end(JSON.stringify({ erro: "Erro interno no servidor local." }));
     }
     return;
   }
@@ -59,7 +59,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  const configured = Boolean(process.env.ANTHROPIC_API_KEY);
+  const configured = Boolean(process.env.OPENAI_API_KEY);
   console.log(`EduTec Prometheus em http://localhost:${PORT}`);
-  console.log(configured ? "Assistente: chave encontrada ✓" : "Assistente: sem ANTHROPIC_API_KEY (a página mostrará que falta configurar).");
+  console.log(configured ? "Assistente: chave encontrada ✓" : "Assistente: sem OPENAI_API_KEY (o chat mostrará que falta configurar).");
 });
