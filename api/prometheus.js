@@ -40,24 +40,25 @@ function limparMensagens(lista) {
 }
 
 // Traduz erros da OpenAI em mensagens claras, sem expor detalhes técnicos.
-function erroAmigavel(status, codigo) {
+function erroAmigavel(status, codigo, config) {
   if (status === 401) return { status: 500, mensagem: "A chave da API configurada no servidor é inválida." };
   if (status === 429 && codigo === "insufficient_quota") return { status: 503, mensagem: "Os créditos da API acabaram. Verifique o faturamento da conta do provedor de IA." };
   if (status === 429) return { status: 429, mensagem: "Muitas perguntas ao mesmo tempo. Aguarde alguns segundos e tente de novo." };
-  if (status === 404 || codigo === "model_not_found") return { status: 500, mensagem: "O modelo configurado não está disponível para esta chave. Confira a variável OPENAI_MODEL (ou apague-a para usar o padrão)." };
+  if (status === 404 || codigo === "model_not_found") return { status: 500, mensagem: `O modelo "${config.modelo}" não está disponível para esta chave (provedor detectado: ${config.provedor}).` };
   if (status >= 500) return { status: 502, mensagem: "O serviço de IA está instável no momento. Tente novamente em instantes." };
   return { status: 502, mensagem: "Não foi possível gerar a resposta. Tente reformular a pergunta." };
 }
 
 const PROVEDORES = [
-  { prefixo: "gsk_", url: "https://api.groq.com/openai/v1", modelo: "llama-3.3-70b-versatile" },
-  { prefixo: "AIza", url: "https://generativelanguage.googleapis.com/v1beta/openai", modelo: "gemini-3.8-flash" },
+  { nome: "Groq", prefixo: "gsk_", url: "https://api.groq.com/openai/v1", modelo: "llama-3.3-70b-versatile" },
+  { nome: "Gemini", prefixo: "AIza", url: "https://generativelanguage.googleapis.com/v1beta/openai", modelo: "gemini-3.8-flash" },
 ];
 
 function configuracao(chave) {
   const conhecido = PROVEDORES.find((p) => chave.startsWith(p.prefixo));
   const url = conhecido ? conhecido.url : (process.env.OPENAI_BASE_URL || "").trim() || "https://api.openai.com/v1";
   return {
+    provedor: conhecido ? conhecido.nome : (process.env.OPENAI_BASE_URL ? "personalizado" : "OpenAI"),
     endpoint: url.replace(/\/+$/, "").replace(/\/chat\/completions$/, "") + "/chat/completions",
     modelo: (process.env.OPENAI_MODEL || "").trim() || (conhecido ? conhecido.modelo : "gpt-5-mini"),
   };
@@ -117,7 +118,7 @@ async function atender(req, res) {
 
   if (!resposta.ok) {
     console.error("OpenAI:", resposta.status, dados?.error?.code || "", dados?.error?.message || "");
-    const { status, mensagem } = erroAmigavel(resposta.status, dados?.error?.code);
+    const { status, mensagem } = erroAmigavel(resposta.status, dados?.error?.code, config);
     return responder(res, status, { erro: mensagem });
   }
 
